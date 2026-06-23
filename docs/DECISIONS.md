@@ -6,16 +6,28 @@ This file records durable project decisions so future sessions can understand wh
 
 ## Decision Log
 
+### 2026-06-23: Merge and push main to GitHub
+
+Decision: Merge the remote README-only initial commit into local `main`, keep the full local project README while preserving the remote short description, and push `main` to GitHub.
+
+Why: The GitHub repository already had an initial README commit, so the local project history could not be pushed until the histories were integrated.
+
+Impact:
+
+- Current local and remote `main` are both at `f3d9158`.
+- `origin` points to `https://github.com/lectronicart/zero2codex.git`.
+- The repo is ready for hosted preview setup.
+- `docs/lectronicart_project_operating_system_v1/` remains untracked and needs an explicit decision.
+
 ### 2026-06-23: Current viewable version is local Vite until deployment is configured
 
 Decision: Treat the current viewable project as a local Vite app, not a hosted deployment.
 
-Why: The GitHub remote exists, but pushing is not complete yet because `origin/main` has an unrelated initial README commit. No Vercel, Netlify, GitHub Pages, or other static deployment has been configured.
+Why: No Vercel, Netlify, GitHub Pages, or other static deployment has been configured yet.
 
 Impact:
 
 - Use `npm run dev -- --host 127.0.0.1` and open `http://127.0.0.1:5173/` to view the app locally.
-- Resolve the remote history and push before setting up hosted deployment.
 - A future hosted preview should be recorded in `README.md` and `docs/HANDOFF.md`.
 
 ### 2026-06-23: Build the Level 2 terminal slice before auth

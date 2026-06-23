@@ -6,18 +6,15 @@ This is the practical starter backlog. The project direction is defined in `docs
 
 ## Current Task List
 
-1. Resolve GitHub remote history and push. `next exact action`
-   - Local `main` has commit `63b2984`.
-   - `origin/main` has a separate initial README commit `76cf894`.
-   - Merge with `--allow-unrelated-histories`.
-   - Keep the richer local README while preserving the remote short description in substance.
-   - Run the full verification set.
-   - Push `main` to `origin`.
+1. Decide what to do with `docs/lectronicart_project_operating_system_v1/`. `next exact action`
+   - The folder is currently untracked.
+   - Inspect it before adding, ignoring, moving, or deleting anything.
+   - Do not commit it blindly.
 
 2. Create a viewable hosted preview. `not started`
    - The project is viewable locally with `npm run dev -- --host 127.0.0.1`.
    - No deployed URL exists yet.
-   - Choose Vercel, Netlify, GitHub Pages, or another static host after GitHub push is resolved.
+   - `main` is pushed to GitHub, so a static host can now be configured.
 
 3. Write playable Level 1 lessons. `recommended next Goal Mode task`
    - Use the existing lesson schema and lesson runner.

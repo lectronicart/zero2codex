@@ -11,8 +11,9 @@ What exists now:
 - A Git repository on branch `main`.
 - Local root commit `63b2984` exists: `Build Level 2 virtual terminal lessons`.
 - GitHub remote `origin` is configured as `https://github.com/lectronicart/zero2codex.git`.
-- Remote `origin/main` has a separate initial commit `76cf894` containing only `README.md`.
-- Local `main` and `origin/main` currently have unrelated histories. The local commit has not been pushed yet.
+- Local `main` is merged and pushed to `origin/main`.
+- Current local and remote HEAD: `f3d9158` (`Merge remote-tracking branch 'origin/main'`).
+- Remote initial commit `76cf894` was merged with the local project history. The README conflict was resolved by keeping the full local README and preserving the remote short description in the opening copy.
 - A `docs/` folder with project memory files.
 - `docs/ZERO2CODEX_BUILD_GUIDE.html`, a research-backed build guide for the full course/product.
 - A Vite + React + TypeScript app scaffold.
@@ -25,7 +26,7 @@ What exists now:
 - Local progress completion and resume state through `localStorage`.
 - Placeholder route shells for `/login` and `/register`.
 - No Supabase, email auth, Google OAuth, authenticated progress sync, achievements, real terminal execution, Git simulator, or Codex CLI simulator yet.
-- `git status --short` currently shows `?? docs/lectronicart_project_operating_system_v1/`, an untracked folder not inspected or committed in the terminal-slice commit.
+- `git status --short` currently shows `?? docs/lectronicart_project_operating_system_v1/`, an untracked folder not inspected or committed in the terminal-slice or memory commits.
 
 Project direction:
 
@@ -170,11 +171,12 @@ Memory/docs updated:
 - `docs/DECISIONS.md`
 - `docs/PROJECT_MEMORY.md`
 
-Post-commit memory update in this session:
+Post-terminal memory and GitHub update in this session:
 
 - `docs/HANDOFF.md`
 - `docs/NEXT_STEPS.md`
 - `docs/DECISIONS.md`
+- Merge commit `f3d9158` pushed local `main` to GitHub after resolving the remote README-only initial commit.
 
 ## What A Future AI Session Should Do First
 
@@ -222,9 +224,11 @@ In this sandbox, binding the dev server required elevated permissions.
 - Starting Vite still requires elevated permissions in this sandbox.
 - The in-app browser tool was not exposed. Browser QA used Playwright with the repo's dev dependency.
 - Playwright's browser binary had to be installed before browser smoke tests could run.
-- GitHub push attempt failed because `origin/main` already contains an initial README commit that local `main` does not have.
+- First GitHub push attempt failed because `origin/main` already contained an initial README commit that local `main` did not have.
 - `git fetch origin main` succeeded and showed remote commit `76cf894`.
-- Attempted merge with `git merge origin/main --allow-unrelated-histories --no-edit`, but the tool approval was blocked by the current Codex usage limit, so no merge was performed.
+- The first attempted merge was blocked by a temporary Codex usage-limit approval issue, but a later merge succeeded.
+- The README add/add conflict was resolved manually.
+- `git push -u origin main` succeeded, and local `main` now tracks `origin/main`.
 - `gh` is not installed, so PR creation through GitHub CLI is not available from this environment.
 
 ## Known Limitations
@@ -237,8 +241,7 @@ In this sandbox, binding the dev server required elevated permissions.
 
 ## Unfinished Work
 
-- Local commit `63b2984` still needs to be integrated with remote commit `76cf894` and pushed to GitHub.
-- The remote initial README description should be preserved in substance when resolving the README merge.
+- `docs/lectronicart_project_operating_system_v1/` is untracked and has not been inspected or committed.
 - No Supabase setup or environment variables yet.
 - No email/password account creation yet.
 - No synced progress store yet.
@@ -248,19 +251,9 @@ In this sandbox, binding the dev server required elevated permissions.
 
 ## Next Exact Action
 
-Resolve the GitHub remote history and push the local project.
+Decide what to do with the untracked `docs/lectronicart_project_operating_system_v1/` folder.
 
-Recommended exact steps:
-
-- Inspect `git status -sb`.
-- Inspect `git show origin/main:README.md`.
-- Merge remote history with `git merge origin/main --allow-unrelated-histories`.
-- Resolve the expected `README.md` conflict by keeping the richer local README while preserving the remote short description in substance.
-- Run `npm run typecheck`, `npm run lint`, `npm run test`, `npm run validate:content`, and `npm run build`.
-- Commit the merge if needed.
-- Push with `git push -u origin main`.
-
-After GitHub push is complete, the next product task is to write the complete playable Level 1 lesson set using the existing lesson schema and lesson runner.
+After that, the next product task is to write the complete playable Level 1 lesson set using the existing lesson schema and lesson runner.
 
 Recommended next Goal Mode task:
 
