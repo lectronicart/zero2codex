@@ -17,10 +17,18 @@ export type FileSystemExpectation = {
   absent?: string[];
 };
 
+export type OutputExpectation = {
+  contains?: string[];
+  absent?: string[];
+  equals?: string[];
+  matches?: string[];
+};
+
 export type TerminalStepValidationInput = {
   expectedCommands?: CommandExpectation[];
   expectedCurrentDirectory?: string;
   expectedFileSystem?: FileSystemExpectation;
+  expectedOutput?: OutputExpectation;
   successMessage: string;
   failureFeedback: string;
 };
@@ -58,6 +66,11 @@ export function validateTerminalStep(
   const fsResult = validateFileSystem(step.expectedFileSystem, state);
   if (!fsResult.ok) {
     return { ok: false, message: fsResult.message || step.failureFeedback };
+  }
+
+  const outputResult = validateOutput(step.expectedOutput, state);
+  if (!outputResult.ok) {
+    return { ok: false, message: outputResult.message || step.failureFeedback };
   }
 
   return { ok: true, message: step.successMessage };
@@ -137,6 +150,47 @@ function validateFileSystem(
 
     if (getNode(state.fileSystem, path)) {
       return { ok: false, message: `${path} is still there.` };
+    }
+  }
+
+  return { ok: true };
+}
+
+function validateOutput(
+  expected: OutputExpectation | undefined,
+  state: TerminalSessionState,
+): { ok: true } | { ok: false; message?: string } {
+  if (!expected) {
+    return { ok: true };
+  }
+
+  const output = state.lastOutput;
+  const joinedOutput = output.join("\n");
+
+  if (expected.equals) {
+    const sameLength = output.length === expected.equals.length;
+    const sameLines = expected.equals.every((line, index) => output[index] === line);
+
+    if (!sameLength || !sameLines) {
+      return { ok: false, message: "The latest command output is not the expected text yet." };
+    }
+  }
+
+  for (const snippet of expected.contains ?? []) {
+    if (!joinedOutput.includes(snippet)) {
+      return { ok: false, message: `The latest output does not include ${snippet} yet.` };
+    }
+  }
+
+  for (const snippet of expected.absent ?? []) {
+    if (joinedOutput.includes(snippet)) {
+      return { ok: false, message: `The latest output still includes ${snippet}.` };
+    }
+  }
+
+  for (const pattern of expected.matches ?? []) {
+    if (!new RegExp(pattern).test(joinedOutput)) {
+      return { ok: false, message: "The latest output does not match the expected pattern yet." };
     }
   }
 

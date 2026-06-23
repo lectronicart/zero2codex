@@ -32,6 +32,7 @@ export function createTerminalSession({
     currentDirectory,
     history: [],
     entries: [entry("system", welcomeMessage)],
+    lastOutput: [],
   };
 }
 
@@ -48,13 +49,14 @@ export function runTerminalCommand(
   const inputEntry = entry("input", trimmed, state.currentDirectory);
   const outputEntries = result.error
     ? [entry("error", result.error)]
-    : result.output.filter(Boolean).map((line) => entry("output", line));
+    : result.output.map((line) => entry("output", line));
 
   return {
     fileSystem: result.fileSystem,
     currentDirectory: result.currentDirectory,
     history: [...state.history, trimmed],
     entries: result.clear ? [] : [...state.entries, inputEntry, ...outputEntries],
+    lastOutput: result.error ? [] : result.output,
   };
 }
 

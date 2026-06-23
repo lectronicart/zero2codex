@@ -14,6 +14,7 @@ const allCourseLessons = courseLevels.flatMap((level) => level.lessons);
 const lessonIds = allCourseLessons.map((lesson) => lesson.id);
 const uniqueLessonIds = new Set(lessonIds);
 const level2Lessons = playableLessons.filter((lesson) => lesson.levelId === 2);
+const level3Lessons = playableLessons.filter((lesson) => lesson.levelId === 3);
 
 if (courseStats.totalLevels !== 17) {
   errors.push(`Expected 17 levels, found ${courseStats.totalLevels}.`);
@@ -37,7 +38,11 @@ if (level2Lessons.length !== 13) {
   errors.push(`Expected 13 playable Level 2 lessons, found ${level2Lessons.length}.`);
 }
 
-for (const lesson of level2Lessons) {
+if (level3Lessons.length !== 13) {
+  errors.push(`Expected 13 playable Level 3 lessons, found ${level3Lessons.length}.`);
+}
+
+for (const lesson of [...level2Lessons, ...level3Lessons]) {
   const terminalSteps = lesson.sections.filter(
     (section) => section.type === "terminalStep",
   );
@@ -54,6 +59,6 @@ if (errors.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Content OK: ${courseStats.totalLevels} levels, ${courseStats.totalLessons} map lessons, ${level2Lessons.length} playable Level 2 lessons.`,
+    `Content OK: ${courseStats.totalLevels} levels, ${courseStats.totalLessons} map lessons, ${level2Lessons.length} Level 2 lessons, ${level3Lessons.length} Level 3 lessons.`,
   );
 }

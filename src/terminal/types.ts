@@ -34,12 +34,25 @@ export type CommandResult = {
   clear?: boolean;
 };
 
+export type ParsedSimpleCommand = {
+  command: string;
+  args: string[];
+  raw: string;
+};
+
+export type RedirectMode = "overwrite" | "append";
+
 export type ParsedCommand =
   | {
       ok: true;
       command: string;
       args: string[];
       raw: string;
+      pipe?: ParsedSimpleCommand;
+      redirect?: {
+        mode: RedirectMode;
+        path: string;
+      };
     }
   | {
       ok: false;
@@ -59,4 +72,5 @@ export type TerminalSessionState = {
   currentDirectory: string;
   history: string[];
   entries: TerminalOutputEntry[];
+  lastOutput: string[];
 };

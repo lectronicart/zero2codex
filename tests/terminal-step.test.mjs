@@ -49,3 +49,34 @@ test("terminalStep validation catches absent-path expectations", () => {
   state = runTerminalCommand(state, "rm old.txt");
   assert.equal(validateTerminalStep(step, state).ok, true);
 });
+
+test("terminalStep validation checks latest command output", () => {
+  const step = {
+    expectedCommands: ['grep "Codex" notes.txt'],
+    expectedOutput: {
+      contains: ["notes.txt:2:Codex reads files"],
+    },
+    successMessage: "found",
+    failureFeedback: "not found",
+  };
+
+  let state = createTerminalSession({
+    initialFileSystem: {
+      home: {
+        type: "directory",
+        children: {
+          codex: {
+            type: "directory",
+            children: {
+              "notes.txt": "hello\nCodex reads files",
+            },
+          },
+        },
+      },
+    },
+  });
+
+  assert.equal(validateTerminalStep(step, state).ok, false);
+  state = runTerminalCommand(state, 'grep "Codex" notes.txt');
+  assert.deepEqual(validateTerminalStep(step, state), { ok: true, message: "found" });
+});

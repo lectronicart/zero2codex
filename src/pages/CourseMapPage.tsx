@@ -64,14 +64,15 @@ export function CourseMapPage() {
           <h2 id="mvp-title">First build slice</h2>
           <p>
             This scaffold keeps the full 17-level vision visible while marking
-            the Level 2 terminal path is now playable while the full 17-level
-            vision remains visible.
+            the Level 2 and Level 3 terminal paths as playable while the full
+            17-level vision remains visible.
           </p>
         </div>
         <ul>
           <li>Level 2 complete: safe terminal navigation and file commands.</li>
+          <li>Level 3 complete: reading, writing, searching, pipes, and counts.</li>
           <li>Progress saves locally and survives refresh.</li>
-          <li>Level 8 first three lessons: Codex orientation and setup.</li>
+          <li>Level 8 first three lessons remain MVP targets.</li>
         </ul>
       </section>
 

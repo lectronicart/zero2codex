@@ -45,6 +45,20 @@ Impact:
 - The terminal supports only `pwd`, `ls`, `cd`, `mkdir`, `touch`, `rm`, `cp`, `mv`, `cat`, `echo`, `clear`, and `help`.
 - Future Git, Codex, pipes, redirects, grep, curl, auth, and sync work should build on these seams without connecting to a real shell.
 
+### 2026-06-23: Extend the safe terminal for Level 3 before Git
+
+Decision: Add Level 3 reading-and-writing-file lessons plus safe simulated support for `head`, `tail`, `grep`, `rg`, `wc`, one pipe, and `>` / `>>` redirects.
+
+Why: Level 3 depends on inspecting file contents, writing text, searching files, counting results, and combining small commands before learners are ready for Git.
+
+Impact:
+
+- `src/content/level3Lessons.ts` owns the Level 3 lesson content.
+- `src/terminal/parser.ts` now parses quoted strings plus one pipe and one redirect.
+- `src/terminal/commands.ts` handles command output flow for pipe and redirect scenarios.
+- `src/terminal/validation.ts` can validate latest command output through `expectedOutput`.
+- This is still not a real shell. Multi-stage pipes, advanced regex, Git, Codex CLI, curl, backend APIs, and host file access remain out of scope.
+
 ### 2026-06-23: zero2codex will be a Codex-focused course inspired by zero2claude
 
 Decision: Build zero2codex as a free, gamified, beginner-friendly digital course similar in mechanics and ambition to `zero2claude.dev`, but focused on OpenAI Codex.

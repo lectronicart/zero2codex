@@ -3,6 +3,7 @@ import type { FileTreeInput } from "../terminal/types.ts";
 import type {
   CommandExpectation,
   FileSystemExpectation,
+  OutputExpectation,
 } from "../terminal/validation.ts";
 
 const commandExpectationSchema = z.union([
@@ -21,6 +22,13 @@ const fileSystemExpectationSchema = z.object({
     )
     .optional(),
   absent: z.array(z.string().min(1)).optional(),
+});
+
+const outputExpectationSchema = z.object({
+  contains: z.array(z.string().min(1)).optional(),
+  absent: z.array(z.string().min(1)).optional(),
+  equals: z.array(z.string()).optional(),
+  matches: z.array(z.string().min(1)).optional(),
 });
 
 const baseSectionSchema = z.object({
@@ -72,6 +80,7 @@ export const terminalStepSectionSchema = baseSectionSchema.extend({
   expectedCommands: z.array(commandExpectationSchema).optional(),
   expectedCurrentDirectory: z.string().min(1).optional(),
   expectedFileSystem: fileSystemExpectationSchema.optional(),
+  expectedOutput: outputExpectationSchema.optional(),
   successMessage: z.string().min(1),
   hint: z.string().min(1),
   failureFeedback: z.string().min(1),
@@ -110,6 +119,7 @@ export type TerminalStepSection = Omit<
 > & {
   expectedCommands?: CommandExpectation[];
   expectedFileSystem?: FileSystemExpectation;
+  expectedOutput?: OutputExpectation;
 };
 export type LessonSection =
   | NarrativeSection

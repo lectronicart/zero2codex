@@ -20,7 +20,10 @@ Implemented now:
 - Public course map driven by `src/content/course.ts`.
 - Full 17-level, 151-lesson outline from the build guide.
 - Playable Level 2 terminal-learning path with 13 lessons.
+- Playable Level 3 reading-and-writing-files path with 13 lessons.
 - Browser-safe virtual terminal with an in-memory file system.
+- Safe simulated support for file inspection, writing, appending, search, pipes,
+  and counts.
 - Local progress storage for lesson completion and resume state.
 - Placeholder routes for `/login` and `/register`.
 
@@ -72,6 +75,36 @@ npm run lint
 npm run test
 npm run validate:content
 ```
+
+## Safe Terminal
+
+The lesson terminal is a browser-only simulation. It never runs commands on the
+learner's computer and never connects to a backend shell.
+
+Supported commands:
+
+```text
+pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, clear, help
+```
+
+Supported syntax:
+
+```text
+cat notes.txt | grep "Codex"
+grep "ERROR" app.log | wc -l
+echo "hello" > notes.txt
+echo "another line" >> notes.txt
+```
+
+Known limitations:
+
+- The parser intentionally supports only one pipe at a time.
+- Redirects support overwrite with `>` and append with `>>`.
+- `grep` is simple text matching with optional `-r`; advanced regular
+  expressions are not implemented.
+- `rg` is a beginner-friendly recursive search simulation, not real ripgrep.
+- Git, Codex CLI, curl, real shell execution, backend APIs, and Supabase are
+  not implemented yet.
 
 ## MVP Direction
 

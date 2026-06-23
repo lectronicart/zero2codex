@@ -20,11 +20,11 @@ export function TerminalPreview() {
           lessons
         </p>
         <p className="muted-line"># First playable slice</p>
-        <p>{playableLessonIds.size} Level 2 terminal lessons playable now</p>
+        <p>{playableLessonIds.size} terminal lessons playable now</p>
         <p className="muted-line"># Current implementation</p>
         <p>Safe VFS terminal, lesson runner, local progress</p>
         <p>
-          <span className="prompt">status:</span> ready for lesson engine
+          <span className="prompt">status:</span> ready for Level 1 lessons
         </p>
       </div>
     </aside>

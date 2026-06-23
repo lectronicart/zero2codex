@@ -34,8 +34,8 @@ export function LessonShellPage() {
       <div className="route-shell-panel">
         <h2>Planned lesson</h2>
         <p>
-          This lesson is still in the content backlog. Level 2 is the current
-          playable terminal-learning slice.
+          This lesson is still in the content backlog. Levels 2 and 3 are the
+          current playable terminal-learning slices.
         </p>
       </div>
       <Link className="button button-secondary" to="/">

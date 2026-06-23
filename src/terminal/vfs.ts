@@ -296,6 +296,88 @@ export function readFileAt(
   return node.content;
 }
 
+export function writeFileAt(
+  fileSystem: VirtualFileSystem,
+  currentDirectory: string,
+  inputPath: string,
+  content: string,
+  mode: "overwrite" | "append" = "overwrite",
+): VirtualFileSystem {
+  const next = cloneFileSystem(fileSystem);
+  const target = resolvePath(currentDirectory, inputPath, next.homeDirectory);
+  const parent = getDirectory(next, getParentPath(target));
+  const name = getBaseName(target);
+
+  if (!parent) {
+    throw new Error(`The folder ${getParentPath(target)} does not exist yet.`);
+  }
+
+  if (!isSafeEntryName(name)) {
+    throw new Error("Choose a file name without /, . or ...");
+  }
+
+  const existing = parent.children[name];
+  if (existing?.type === "directory") {
+    throw new Error(`${target} is a folder, so text cannot be written there.`);
+  }
+
+  if (mode === "append" && existing?.type === "file") {
+    const separator = existing.content && content ? "\n" : "";
+    parent.children[name] = file(`${existing.content}${separator}${content}`);
+    return next;
+  }
+
+  parent.children[name] = file(content);
+  return next;
+}
+
+export type FileSearchEntry = {
+  path: string;
+  content: string;
+};
+
+export function collectFilesAt(
+  fileSystem: VirtualFileSystem,
+  currentDirectory: string,
+  inputPath: string,
+  recursive = false,
+): FileSearchEntry[] {
+  const target = resolvePath(currentDirectory, inputPath, fileSystem.homeDirectory);
+  const node = getNode(fileSystem, target);
+
+  if (!node) {
+    throw new Error(`${target} does not exist.`);
+  }
+
+  if (node.type === "file") {
+    return [{ path: target, content: node.content }];
+  }
+
+  if (!recursive) {
+    throw new Error(`${target} is a folder. Use a recursive search for folders.`);
+  }
+
+  const files: FileSearchEntry[] = [];
+  collectFilesRecursive(node, target, files);
+  return files.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function collectFilesRecursive(
+  directoryNode: DirectoryNode,
+  directoryPath: string,
+  files: FileSearchEntry[],
+) {
+  for (const [name, child] of Object.entries(directoryNode.children)) {
+    const childPath = normalizePath(`${directoryPath}/${name}`);
+    if (child.type === "file") {
+      files.push({ path: childPath, content: child.content });
+      continue;
+    }
+
+    collectFilesRecursive(child, childPath, files);
+  }
+}
+
 function writeTree(target: DirectoryNode, tree: Record<string, FileTreeInput>) {
   for (const [name, value] of Object.entries(tree)) {
     if (!isSafeEntryName(name)) {

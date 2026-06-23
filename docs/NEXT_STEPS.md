@@ -47,8 +47,9 @@ This is the practical starter backlog. The project direction is defined in `docs
    - Use official OpenAI docs for Codex-specific claims.
    - Keep simulations honest and clearly labeled.
 
-9. Extend terminal later. `not started`
-   - Add grep, rg, wc, pipes, and redirects only when Level 3 needs them.
+9. Extend terminal for future levels. `Level 3 slice complete`
+   - Level 3 now supports head, tail, grep, rg, wc, one pipe, and `>` / `>>`.
+   - Add Git simulation only when Level 4 needs it.
    - Do not execute real shell commands in the browser.
 
 10. Update project memory after each implementation slice. `ongoing`

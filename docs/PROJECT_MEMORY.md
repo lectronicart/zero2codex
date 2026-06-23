@@ -13,7 +13,7 @@ zero2codex (LectronicArt Skool 1st Asset)
 Current repo shape:
 
 - Git repository on branch `main`.
-- No commits yet.
+- Local `main` has been merged and pushed to GitHub.
 - `docs/` contains project memory files.
 - `docs/ZERO2CODEX_BUILD_GUIDE.html` contains the full course/product blueprint.
 - Vite + React + TypeScript application scaffold exists.
@@ -23,6 +23,7 @@ Current repo shape:
 - `package.json` and `package-lock.json` exist.
 - `src/content/course.ts` contains the 17-level, 151-lesson outline.
 - `src/content/level2Lessons.ts` contains the complete playable Level 2 lesson set.
+- `src/content/level3Lessons.ts` contains the complete playable Level 3 lesson set.
 - `src/terminal/` contains the browser-safe virtual terminal simulator.
 - `src/progress/progressStore.ts` contains localStorage progress persistence.
 - No Supabase, auth implementation, progress sync, achievements, or real terminal execution yet.
@@ -32,7 +33,7 @@ Current repo shape:
 - The project is in its initial setup phase.
 - The intended product is zero2codex: a free, gamified, beginner-friendly course that teaches coding fundamentals and OpenAI Codex workflows.
 - The reference inspiration is `zero2claude.dev`.
-- The current app has a public course map plus a playable Level 2 terminal-learning slice.
+- The current app has a public course map plus playable Level 2 and Level 3 terminal-learning slices.
 - The desired product is a web course/app with interactive lessons, progress, gamification, terminal/Codex practice, and eventually community and admin tools.
 - Google OAuth is postponed.
 - The next auth phase should use Supabase email/password.
@@ -55,6 +56,8 @@ Current repo shape:
 - `src/content/course.ts`: course outline data.
 - `src/content/lessons.ts`: playable lesson registry.
 - `src/content/lessonSchema.ts`: Zod-backed lesson schema.
+- `src/content/level2Lessons.ts`: Level 2 terminal lesson content.
+- `src/content/level3Lessons.ts`: Level 3 reading/writing/searching lesson content.
 - `src/terminal/`: path resolver, virtual file system, parser, command handlers, terminal state, and validation helpers.
 - `src/components/LessonRunner.tsx`: section-based lesson runner.
 - `src/components/TerminalPanel.tsx`: browser-safe terminal UI.
@@ -89,6 +92,15 @@ npm run test
 npm run validate:content
 npm run build
 ```
+
+Current browser-safe terminal commands:
+
+```text
+pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, clear, help
+```
+
+Supported shell-like syntax is intentionally limited to one pipe plus `>` and
+`>>` redirects.
 
 Current dev command:
 

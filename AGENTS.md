@@ -20,13 +20,15 @@ git status --short
 
 ## Current Implementation Boundary
 
-The current app includes the scaffold plus the playable Level 2 terminal slice:
+The current app includes the scaffold plus the playable Level 2 and Level 3
+terminal slices:
 
 - Route shell.
 - Design tokens.
 - Static content-driven 17-level course map.
 - Zod-backed playable lesson schema.
 - Complete Level 2 terminal-learning lessons.
+- Complete Level 3 reading-and-writing-files lessons.
 - Browser-safe virtual terminal simulator.
 - Local progress persistence through `localStorage`.
 - Placeholder login/register routes and planned-lesson fallback routes.
@@ -34,6 +36,10 @@ The current app includes the scaffold plus the playable Level 2 terminal slice:
 Do not assume Supabase, email auth, Google OAuth, authenticated progress sync,
 achievements, real shell execution, Git simulation, Codex CLI simulation, or
 backend APIs exist until files for those systems are added.
+
+The virtual terminal currently supports `pwd`, `ls`, `cd`, `mkdir`, `touch`,
+`rm`, `cp`, `mv`, `cat`, `head`, `tail`, `echo`, `grep`, `rg`, `wc`, `clear`,
+and `help`, plus one pipe and basic `>` / `>>` redirects.
 
 ## Product Rules
 
@@ -60,6 +66,6 @@ backend APIs exist until files for those systems are added.
 3. Add authenticated progress sync.
 4. Add the first Codex teaser lessons.
 5. Add starter achievements.
-6. Extend terminal commands for Level 3 when needed.
+6. Add Git simulation for Level 4 when needed.
 
 Google OAuth remains postponed.
