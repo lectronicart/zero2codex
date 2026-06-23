@@ -6,42 +6,55 @@ This is the practical starter backlog. The project direction is defined in `docs
 
 ## Current Task List
 
-1. Write playable Level 1 lessons. `recommended next Goal Mode task`
+1. Resolve GitHub remote history and push. `next exact action`
+   - Local `main` has commit `63b2984`.
+   - `origin/main` has a separate initial README commit `76cf894`.
+   - Merge with `--allow-unrelated-histories`.
+   - Keep the richer local README while preserving the remote short description in substance.
+   - Run the full verification set.
+   - Push `main` to `origin`.
+
+2. Create a viewable hosted preview. `not started`
+   - The project is viewable locally with `npm run dev -- --host 127.0.0.1`.
+   - No deployed URL exists yet.
+   - Choose Vercel, Netlify, GitHub Pages, or another static host after GitHub push is resolved.
+
+3. Write playable Level 1 lessons. `recommended next Goal Mode task`
    - Use the existing lesson schema and lesson runner.
    - Every Level 1 lesson needs at least one active interaction.
    - Keep copy original, concrete, and beginner-friendly.
    - Re-run the full verification set.
 
-2. Plan Supabase email auth. `not started`
+4. Plan Supabase email auth. `not started`
    - Google OAuth remains postponed.
    - Decide whether local/MVP preview should disable email confirmation.
    - Add `.env.example` only when Supabase variables are actually needed.
 
-3. Implement email account creation and sign-in. `not started`
+5. Implement email account creation and sign-in. `not started`
    - Add Supabase client setup.
    - Build `/register`, `/login`, and logout.
    - Keep the course map public.
    - Protect lesson routes only once progress sync is ready.
 
-4. Add authenticated progress sync. `not started`
+6. Add authenticated progress sync. `not started`
    - Local progress exists now.
    - Authenticated Supabase sync comes second.
    - Migrate anonymous progress after signup/login.
 
-5. Add starter achievements. `not started`
+7. Add starter achievements. `not started`
    - First Command.
    - Path Finder.
    - Level 2 Complete.
 
-6. Add Codex teaser lessons. `not started`
+8. Add Codex teaser lessons. `not started`
    - Use official OpenAI docs for Codex-specific claims.
    - Keep simulations honest and clearly labeled.
 
-7. Extend terminal later. `not started`
+9. Extend terminal later. `not started`
    - Add grep, rg, wc, pipes, and redirects only when Level 3 needs them.
    - Do not execute real shell commands in the browser.
 
-8. Update project memory after each implementation slice. `ongoing`
+10. Update project memory after each implementation slice. `ongoing`
    - Add major choices to `docs/DECISIONS.md`.
    - Update current facts in `docs/PROJECT_MEMORY.md`.
    - Add a fresh summary to `docs/HANDOFF.md`.
@@ -65,6 +78,22 @@ Use a prompt like this when returning to the project:
 ```text
 Read the docs folder first. Then write the complete Level 1 playable lesson set using the existing lesson schema and lesson runner. Keep content original and beginner-friendly, add active interactions to every lesson, and run npm run typecheck, npm run lint, npm run test, npm run validate:content, and npm run build.
 ```
+
+## Current Viewable Version
+
+Local only:
+
+```sh
+npm run dev -- --host 127.0.0.1
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5173/
+```
+
+No deployed URL exists yet.
 
 ## Watch Outs
 

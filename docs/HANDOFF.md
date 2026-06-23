@@ -9,6 +9,10 @@ This repository now has the first zero2codex app scaffold plus the playable Leve
 What exists now:
 
 - A Git repository on branch `main`.
+- Local root commit `63b2984` exists: `Build Level 2 virtual terminal lessons`.
+- GitHub remote `origin` is configured as `https://github.com/lectronicart/zero2codex.git`.
+- Remote `origin/main` has a separate initial commit `76cf894` containing only `README.md`.
+- Local `main` and `origin/main` currently have unrelated histories. The local commit has not been pushed yet.
 - A `docs/` folder with project memory files.
 - `docs/ZERO2CODEX_BUILD_GUIDE.html`, a research-backed build guide for the full course/product.
 - A Vite + React + TypeScript app scaffold.
@@ -20,9 +24,8 @@ What exists now:
 - Browser-safe virtual terminal simulator.
 - Local progress completion and resume state through `localStorage`.
 - Placeholder route shells for `/login` and `/register`.
-- No commits yet.
 - No Supabase, email auth, Google OAuth, authenticated progress sync, achievements, real terminal execution, Git simulator, or Codex CLI simulator yet.
-- `git status --short` currently shows all project files as untracked because the repository has no initial commit.
+- `git status --short` currently shows `?? docs/lectronicart_project_operating_system_v1/`, an untracked folder not inspected or committed in the terminal-slice commit.
 
 Project direction:
 
@@ -33,6 +36,13 @@ Project direction:
 - Google OAuth is postponed; the next auth phase should start with Supabase email/password.
 
 Future coding sessions should inspect the guide and the existing app scaffold before changing architecture.
+
+Current viewable version:
+
+- No hosted/deployed URL exists yet.
+- Run locally with `npm run dev -- --host 127.0.0.1`.
+- Then open `http://127.0.0.1:5173/`.
+- Playable routes include `/lesson/2.1` through `/lesson/2.13`.
 
 ## Files Added For Project Memory
 
@@ -109,7 +119,7 @@ Playable lessons are validated in `src/content/lessonSchema.ts` with Zod. Curren
 
 ## Files Changed In The Latest Implementation Session
 
-New app/config files:
+App/config files in commit `63b2984`:
 
 - `.gitignore`
 - `AGENTS.md`
@@ -160,6 +170,12 @@ Memory/docs updated:
 - `docs/DECISIONS.md`
 - `docs/PROJECT_MEMORY.md`
 
+Post-commit memory update in this session:
+
+- `docs/HANDOFF.md`
+- `docs/NEXT_STEPS.md`
+- `docs/DECISIONS.md`
+
 ## What A Future AI Session Should Do First
 
 1. Read all files in `docs/`.
@@ -206,6 +222,10 @@ In this sandbox, binding the dev server required elevated permissions.
 - Starting Vite still requires elevated permissions in this sandbox.
 - The in-app browser tool was not exposed. Browser QA used Playwright with the repo's dev dependency.
 - Playwright's browser binary had to be installed before browser smoke tests could run.
+- GitHub push attempt failed because `origin/main` already contains an initial README commit that local `main` does not have.
+- `git fetch origin main` succeeded and showed remote commit `76cf894`.
+- Attempted merge with `git merge origin/main --allow-unrelated-histories --no-edit`, but the tool approval was blocked by the current Codex usage limit, so no merge was performed.
+- `gh` is not installed, so PR creation through GitHub CLI is not available from this environment.
 
 ## Known Limitations
 
@@ -217,6 +237,8 @@ In this sandbox, binding the dev server required elevated permissions.
 
 ## Unfinished Work
 
+- Local commit `63b2984` still needs to be integrated with remote commit `76cf894` and pushed to GitHub.
+- The remote initial README description should be preserved in substance when resolving the README merge.
 - No Supabase setup or environment variables yet.
 - No email/password account creation yet.
 - No synced progress store yet.
@@ -226,7 +248,19 @@ In this sandbox, binding the dev server required elevated permissions.
 
 ## Next Exact Action
 
-Write the complete playable Level 1 lesson set using the existing lesson schema and lesson runner.
+Resolve the GitHub remote history and push the local project.
+
+Recommended exact steps:
+
+- Inspect `git status -sb`.
+- Inspect `git show origin/main:README.md`.
+- Merge remote history with `git merge origin/main --allow-unrelated-histories`.
+- Resolve the expected `README.md` conflict by keeping the richer local README while preserving the remote short description in substance.
+- Run `npm run typecheck`, `npm run lint`, `npm run test`, `npm run validate:content`, and `npm run build`.
+- Commit the merge if needed.
+- Push with `git push -u origin main`.
+
+After GitHub push is complete, the next product task is to write the complete playable Level 1 lesson set using the existing lesson schema and lesson runner.
 
 Recommended next Goal Mode task:
 

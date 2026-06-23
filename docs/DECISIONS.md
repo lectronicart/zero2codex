@@ -6,6 +6,18 @@ This file records durable project decisions so future sessions can understand wh
 
 ## Decision Log
 
+### 2026-06-23: Current viewable version is local Vite until deployment is configured
+
+Decision: Treat the current viewable project as a local Vite app, not a hosted deployment.
+
+Why: The GitHub remote exists, but pushing is not complete yet because `origin/main` has an unrelated initial README commit. No Vercel, Netlify, GitHub Pages, or other static deployment has been configured.
+
+Impact:
+
+- Use `npm run dev -- --host 127.0.0.1` and open `http://127.0.0.1:5173/` to view the app locally.
+- Resolve the remote history and push before setting up hosted deployment.
+- A future hosted preview should be recorded in `README.md` and `docs/HANDOFF.md`.
+
 ### 2026-06-23: Build the Level 2 terminal slice before auth
 
 Decision: Add a browser-safe virtual terminal, local progress, a reusable lesson runner, and all 13 Level 2 terminal lessons before adding Supabase auth.
