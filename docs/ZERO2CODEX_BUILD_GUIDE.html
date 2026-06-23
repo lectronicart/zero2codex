@@ -1,0 +1,1821 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>zero2codex Build Guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08090b;
+      --panel: #111319;
+      --panel-2: #181b23;
+      --panel-3: #20242e;
+      --text: #eef2f1;
+      --muted: #9aa6a3;
+      --faint: #687471;
+      --line: rgba(238, 242, 241, 0.12);
+      --line-strong: rgba(238, 242, 241, 0.22);
+      --accent: #32d583;
+      --accent-2: #5cc8ff;
+      --accent-3: #f5b84b;
+      --danger: #ff6b6b;
+      --code-bg: #050607;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+      --mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% -10%, rgba(50, 213, 131, 0.16), transparent 32rem),
+        radial-gradient(circle at 90% 10%, rgba(92, 200, 255, 0.12), transparent 30rem),
+        linear-gradient(180deg, #090a0d 0%, var(--bg) 36rem, #050607 100%);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.58;
+    }
+
+    a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 9, 11, 0.84);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand strong {
+      font-family: var(--mono);
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    nav a:hover {
+      color: var(--text);
+      border-color: var(--line-strong);
+      text-decoration: none;
+    }
+
+    main {
+      max-width: 1220px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 42px 24px 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+
+    .hero-panel,
+    .terminal-panel,
+    .section,
+    .callout,
+    .card,
+    .stat,
+    .source-list {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel {
+      padding: 34px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(34px, 6vw, 68px);
+      max-width: 820px;
+      font-family: var(--mono);
+    }
+
+    h2 {
+      font-size: clamp(24px, 3.5vw, 38px);
+      font-family: var(--mono);
+      margin-bottom: 18px;
+    }
+
+    h3 {
+      font-size: 19px;
+      font-family: var(--mono);
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      font-size: 15px;
+      font-family: var(--mono);
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .lead {
+      font-size: 18px;
+      color: #c7d1ce;
+      max-width: 780px;
+      margin-top: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      background: var(--panel-2);
+      text-decoration: none;
+    }
+
+    .button.primary {
+      background: var(--accent);
+      color: #04100a;
+      border-color: rgba(50, 213, 131, 0.8);
+      box-shadow: 0 0 30px rgba(50, 213, 131, 0.2);
+    }
+
+    .button:hover {
+      text-decoration: none;
+      filter: brightness(1.06);
+    }
+
+    .terminal-panel {
+      overflow: hidden;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      min-height: 360px;
+    }
+
+    .terminal-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #20231f;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      font-family: var(--mono);
+      color: var(--faint);
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.red { background: #ff5f57; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #28c840; }
+
+    .terminal-body {
+      padding: 18px;
+      font-family: var(--mono);
+      color: #d7ddd9;
+      background: var(--code-bg);
+      flex: 1;
+      font-size: 13px;
+      overflow: hidden;
+    }
+
+    .terminal-body p {
+      font-family: inherit;
+      color: inherit;
+      margin: 0 0 10px;
+    }
+
+    .prompt {
+      color: var(--accent);
+    }
+
+    .comment {
+      color: #74807c;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin: 18px 0 28px;
+    }
+
+    .stat {
+      grid-column: span 3;
+      padding: 18px;
+    }
+
+    .stat b {
+      display: block;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section {
+      padding: 30px;
+      margin: 22px 0;
+      scroll-margin-top: 96px;
+    }
+
+    .section > p:first-of-type {
+      max-width: 860px;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      padding: 18px;
+      box-shadow: none;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .card p:last-child,
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .callout {
+      padding: 18px;
+      margin: 18px 0;
+      background: rgba(50, 213, 131, 0.08);
+      border-color: rgba(50, 213, 131, 0.22);
+      box-shadow: none;
+    }
+
+    .callout.warning {
+      background: rgba(245, 184, 75, 0.08);
+      border-color: rgba(245, 184, 75, 0.26);
+    }
+
+    .callout.danger {
+      background: rgba(255, 107, 107, 0.08);
+      border-color: rgba(255, 107, 107, 0.22);
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0 22px;
+      color: var(--muted);
+      padding: 0;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      display: table;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.055);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code,
+    pre {
+      font-family: var(--mono);
+    }
+
+    code {
+      background: rgba(50, 213, 131, 0.11);
+      color: #b7ffd9;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 0.92em;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      overflow: auto;
+      color: #d8e2df;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      margin: 0 4px 6px 0;
+      white-space: nowrap;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      font-family: var(--mono);
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    summary span {
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+    }
+
+    details ol,
+    details ul {
+      padding: 0 18px 16px 34px;
+      margin-top: 0;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .phase {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .phase b {
+      font-family: var(--mono);
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    .source-list {
+      padding: 18px;
+      box-shadow: none;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .source-list li {
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      color: var(--faint);
+      font-size: 12px;
+      margin-top: 32px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .two,
+      .three {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        grid-column: span 6;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        padding: 26px 14px 56px;
+      }
+
+      .hero-panel,
+      .section {
+        padding: 20px;
+      }
+
+      .stat {
+        grid-column: span 12;
+      }
+
+      .phase {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <strong>$zero2codex</strong>
+          <span>Build guide for a beginner-friendly Codex course and digital asset</span>
+        </div>
+        <nav aria-label="Guide sections">
+          <a href="#north-star">North Star</a>
+          <a href="#reference">Reference</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#curriculum">Curriculum</a>
+          <a href="#build-plan">Build Plan</a>
+          <a href="#ai-prompts">AI Prompts</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-panel">
+          <p class="eyebrow">Version 0.1 - research-backed product blueprint - 2026-06-23</p>
+          <h1>Build zero2codex as the Codex-native cousin of zero2claude.</h1>
+          <p class="lead">The goal is a free, gamified, account-backed course that takes a total beginner from "what is a file?" to confidently using OpenAI Codex to inspect, edit, test, review, and ship real software.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#build-plan">Start with the build plan</a>
+            <a class="button" href="#curriculum">Review the 151-lesson curriculum</a>
+            <a class="button" href="#schemas">Use the data models</a>
+          </div>
+        </div>
+
+        <aside class="terminal-panel" aria-label="Guide summary terminal">
+          <div class="terminal-top">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span>zero2codex-guide</span>
+          </div>
+          <div class="terminal-body">
+            <p><span class="prompt">user@course:~$</span> codex "turn this vision into a product"</p>
+            <p class="comment"># Course spine</p>
+            <p>17 levels, 151 lessons, browser-safe practice labs, Codex workflows, final project.</p>
+            <p class="comment"># Product engine</p>
+            <p>React + Vite SPA, API backend, lesson schema, virtual terminal, auth, progress, forum, admin CMS.</p>
+            <p class="comment"># Codex difference</p>
+            <p>Teach context, permissions, AGENTS.md, config, worktrees, MCP, skills, browser use, subagents, review, cloud/local threads.</p>
+            <p><span class="prompt">status:</span> ready for MVP scaffolding</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="grid" aria-label="Project facts">
+        <div class="stat"><b>17</b><span>proposed levels, matching the reference scale</span></div>
+        <div class="stat"><b>151</b><span>proposed lessons, adapted to Codex</span></div>
+        <div class="stat"><b>12+</b><span>interactive lesson section types</span></div>
+        <div class="stat"><b>1</b><span>capstone project that proves the learner can ship</span></div>
+      </section>
+
+      <section class="section" id="north-star">
+        <h2>North Star</h2>
+        <p>zero2codex should feel like an interactive terminal-native course, not a normal video course or static documentation site. The reference succeeds because it is concrete, game-like, and personal. The Codex version should keep those product patterns while making the content, copy, branding, and implementation original.</p>
+
+        <div class="callout warning">
+          <h3>Important creative boundary</h3>
+          <p>Do not copy zero2claude's lesson text, exact visual assets, exact source code, or private implementation. Pattern-match the product mechanics and quality bar: progression, interaction, onboarding, gamification, community loop, and beginner-friendly teaching. Write original Codex-specific content.</p>
+        </div>
+
+        <div class="three">
+          <article class="card">
+            <h3>Learner Promise</h3>
+            <p>Start with no terminal knowledge. Finish with a real deployed project, a working mental model for software, and a repeatable way to collaborate with Codex safely.</p>
+          </article>
+          <article class="card">
+            <h3>Product Promise</h3>
+            <p>Free core course, account-backed progress, browser labs, review mode, achievements, learner map, community wishes, and a blog that compounds SEO.</p>
+          </article>
+          <article class="card">
+            <h3>Business Promise</h3>
+            <p>Use the free course as a trust-building digital asset. Later offers can include templates, workshops, cohort support, founder build packs, or Codex setup services.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="reference">
+        <h2>Reference Deep Dive</h2>
+        <p>I inspected the public zero2claude site, public routes, public bundled assets, and official OpenAI Codex documentation. Lesson bodies require login, so this guide is based on the public course map, the visible UI, public route behavior, public client-side architecture, and the official Codex docs.</p>
+
+        <h3>What zero2claude does especially well</h3>
+        <div class="two">
+          <div class="card">
+            <h4>Home page as course map</h4>
+            <p>The first screen combines a strong promise, social proof, account CTAs, online learner count, and the complete level list. Learners can see the whole path before signing up.</p>
+            <span class="badge">hero promise</span>
+            <span class="badge">student count</span>
+            <span class="badge">list/card toggle</span>
+            <span class="badge">progress per level</span>
+          </div>
+          <div class="card">
+            <h4>Account-backed but free</h4>
+            <p>The course is positioned as free, but lessons redirect to login/register. This lets the product save progress, personalize paths, support dashboards, and build community identity.</p>
+            <span class="badge">login</span>
+            <span class="badge">register</span>
+            <span class="badge">progress sync</span>
+            <span class="badge">dashboard</span>
+          </div>
+          <div class="card">
+            <h4>Gamified learning</h4>
+            <p>Visible progress counts, skipped lessons, recommended lessons, test-out buttons, review mode, achievements, streak data, and completion moments turn a course into a loop.</p>
+            <span class="badge">achievements</span>
+            <span class="badge">streaks</span>
+            <span class="badge">review mode</span>
+            <span class="badge">test out</span>
+          </div>
+          <div class="card">
+            <h4>Community flywheel</h4>
+            <p>The Wishes forum lets users search, vote, filter by status, and see requests marked granted or in progress. It makes the roadmap public and gives learners a reason to return.</p>
+            <span class="badge">votes</span>
+            <span class="badge">status filters</span>
+            <span class="badge">threads</span>
+            <span class="badge">roadmap signal</span>
+          </div>
+          <div class="card">
+            <h4>Global reach</h4>
+            <p>The site includes language controls, UI translation, RTL-facing considerations, font controls, theme/palette controls, and a global learner map.</p>
+            <span class="badge">i18n</span>
+            <span class="badge">RTL</span>
+            <span class="badge">map</span>
+            <span class="badge">accessibility</span>
+          </div>
+          <div class="card">
+            <h4>Creator proof</h4>
+            <p>The About page tells the story of building the platform with AI as a pair programmer. For zero2codex, this should become "built with Codex, taught with Codex."</p>
+            <span class="badge">proof</span>
+            <span class="badge">mission</span>
+            <span class="badge">trust</span>
+            <span class="badge">origin story</span>
+          </div>
+        </div>
+
+        <h3>Observed public architecture</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Observed pattern</th>
+              <th>zero2codex adaptation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Frontend</td>
+              <td>React + Vite-style SPA, React Router, lazy-loaded feature chunks, Tailwind-style utility CSS and design tokens.</td>
+              <td>Use React + Vite + TypeScript + Tailwind or CSS tokens. Keep the app fast, static-friendly, and route-driven.</td>
+            </tr>
+            <tr>
+              <td>Backend</td>
+              <td>Separate API service at a Render-hosted domain for auth, progress, settings, forum, admin, AI onboarding, and analytics.</td>
+              <td>Use a Vercel/Render/Fly API plus Postgres. Supabase is a beginner-friendly option for auth and storage.</td>
+            </tr>
+            <tr>
+              <td>Progress</td>
+              <td>Local progress store with server sync. Tracks completed/skipped lessons, current lesson/section, completion dates, and high-water marks.</td>
+              <td>Start with localStorage for MVP. Add authenticated sync as soon as accounts are implemented.</td>
+            </tr>
+            <tr>
+              <td>Lesson UI</td>
+              <td>Section-based lesson engine with narrative, quiz, fill-in-blank, match, terminal, tree/path, code, simulation, guide, prompt, and checklist types.</td>
+              <td>Build a schema-first lesson renderer. Keep content data separate from UI components so lessons can be authored in JSON or MDX.</td>
+            </tr>
+            <tr>
+              <td>Terminal</td>
+              <td>Browser virtual file system, command parser, git simulator, command history, tab completion, redirection, pipes, grep/wc/curl mocks.</td>
+              <td>Reuse this concept for terminal basics and add safe Codex command simulations before asking learners to run real Codex locally.</td>
+            </tr>
+            <tr>
+              <td>Admin</td>
+              <td>Public bundle reveals extensive admin routes for lessons, themes, palettes, translations, analytics, email, AI settings, validation, and community.</td>
+              <td>Do not build full admin first. Start with content files. Add admin CMS after the lesson engine proves useful.</td>
+            </tr>
+            <tr>
+              <td>Marketing</td>
+              <td>Blog route with tutorial/product/deep-dive categories, terminal-themed cards, author/date/read-time metadata, and CTAs.</td>
+              <td>Launch with 5 to 8 SEO essays around Codex basics, agent workflows, terminal fundamentals, and building with AI.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <h3>Product translation</h3>
+          <p>zero2codex should be close in learning mechanics, not in literal expression. Keep the complete course map, free positioning, interactive lesson engine, community wishes, and terminal aesthetic. Make the content, brand voice, visual system, and Codex-specific workflows original.</p>
+        </div>
+      </section>
+
+      <section class="section" id="codex-scope">
+        <h2>Codex Learning Scope</h2>
+        <p>Official OpenAI Codex docs position Codex as a coding agent that can write, understand, review, debug, and automate software development work. The course should teach Codex as a full development workflow, not just a chat box.</p>
+
+        <div class="three">
+          <article class="card">
+            <h3>Core Surfaces</h3>
+            <ul>
+              <li>Codex desktop app for project threads, plans, browser previews, worktrees, diff review, and artifacts.</li>
+              <li>Codex CLI for terminal-first local work, slash commands, permissions, review, resume, and exec automation.</li>
+              <li>IDE extension for editor-attached context and selected-code workflows.</li>
+              <li>Cloud tasks for isolated parallel work after the repo is pushed to GitHub.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Core Habits</h3>
+            <ul>
+              <li>Prompt with goal, context, constraints, and done criteria.</li>
+              <li>Use Plan mode for fuzzy or high-risk work.</li>
+              <li>Let Codex inspect before editing.</li>
+              <li>Ask Codex to test, verify, and review before accepting work.</li>
+              <li>Keep tasks small enough to review.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Core Safety</h3>
+            <ul>
+              <li>Understand sandbox modes: read-only, workspace-write, and full access.</li>
+              <li>Understand approval policies and why network access is constrained.</li>
+              <li>Treat web pages, dependencies, and issue text as untrusted.</li>
+              <li>Keep secrets out of prompts and repositories.</li>
+              <li>Use Git to review and roll back changes.</li>
+            </ul>
+          </article>
+        </div>
+
+        <h3>Codex topics that need first-class lessons</h3>
+        <div>
+          <span class="badge">Codex app</span>
+          <span class="badge">CLI</span>
+          <span class="badge">IDE extension</span>
+          <span class="badge">cloud threads</span>
+          <span class="badge">Plan mode</span>
+          <span class="badge">Goal mode</span>
+          <span class="badge">threads and resume</span>
+          <span class="badge">context window</span>
+          <span class="badge">compaction</span>
+          <span class="badge">AGENTS.md</span>
+          <span class="badge">config.toml</span>
+          <span class="badge">permissions</span>
+          <span class="badge">sandboxing</span>
+          <span class="badge">web search</span>
+          <span class="badge">in-app browser</span>
+          <span class="badge">computer use</span>
+          <span class="badge">worktrees</span>
+          <span class="badge">handoff</span>
+          <span class="badge">review mode</span>
+          <span class="badge">MCP</span>
+          <span class="badge">skills</span>
+          <span class="badge">plugins</span>
+          <span class="badge">subagents</span>
+          <span class="badge">codex exec</span>
+          <span class="badge">GitHub reviews</span>
+          <span class="badge">image inputs</span>
+          <span class="badge">image generation</span>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <h2>Product Architecture</h2>
+        <p>Build zero2codex as a content-driven web app with a reusable lesson engine. Do not start with a huge CMS. Start with local content files, a typed lesson schema, local progress, and browser labs. Add auth, sync, community, admin, and AI personalization in layers.</p>
+
+        <h3>Recommended stack</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>MVP choice</th>
+              <th>Scale-up choice</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Frontend</td>
+              <td>Vite + React + TypeScript</td>
+              <td>Keep Vite unless SEO forces Next.js</td>
+              <td>Matches the reference style: SPA, fast route changes, lazy chunks, simple deployment.</td>
+            </tr>
+            <tr>
+              <td>Styling</td>
+              <td>Tailwind CSS plus CSS variables</td>
+              <td>Design-token system with palette editor</td>
+              <td>Easy to build terminal-like UI with dark/light themes and custom palettes.</td>
+            </tr>
+            <tr>
+              <td>Lesson content</td>
+              <td>Typed JSON or MDX files in repo</td>
+              <td>Admin lesson editor with validation</td>
+              <td>Content files are faster and safer before the curriculum stabilizes.</td>
+            </tr>
+            <tr>
+              <td>State</td>
+              <td>React state + localStorage</td>
+              <td>Zustand or small custom store plus server sync</td>
+              <td>Progress should work before login, then sync after account creation.</td>
+            </tr>
+            <tr>
+              <td>Auth</td>
+              <td>Supabase Auth or custom username/password API</td>
+              <td>OAuth plus email verification and account recovery</td>
+              <td>Keep sign-up short. The course needs identity mostly for progress and community.</td>
+            </tr>
+            <tr>
+              <td>Database</td>
+              <td>Postgres via Supabase, Neon, or Railway</td>
+              <td>Postgres plus analytics warehouse if needed</td>
+              <td>Progress, forum, achievements, notes, and analytics are relational.</td>
+            </tr>
+            <tr>
+              <td>Backend</td>
+              <td>Node API with Express/Fastify or serverless route handlers</td>
+              <td>Dedicated API service with background jobs</td>
+              <td>Separate API keeps the course app clean and mirrors the reference architecture.</td>
+            </tr>
+            <tr>
+              <td>Deployment</td>
+              <td>Vercel or Netlify for frontend, Render/Fly/Vercel for API</td>
+              <td>Same, plus CDN and queue workers</td>
+              <td>Beginner-friendly, low maintenance, and close to real startup practice.</td>
+            </tr>
+            <tr>
+              <td>Analytics</td>
+              <td>PostHog or Plausible plus custom events</td>
+              <td>Course funnel dashboard</td>
+              <td>Track completion, drop-off, search, wish votes, and lesson friction.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Route map</h3>
+        <pre><code>/                         Public course map, hero, levels, CTA
+/lesson/:lessonId         Authenticated lesson runner
+/login                    Login
+/register                 Free account sign-up
+/forgot-password          Account recovery
+/dashboard                Progress, streaks, review queue
+/dashboard/achievements   Badges and progress toward locked achievements
+/dashboard/notes          Personal notes and exports
+/dashboard/plan           AI-generated learning plan
+/practice                 Free terminal sandbox
+/forum                    Wishes, votes, statuses, roadmap signal
+/forum/thread/:id         Wish detail and replies
+/map                      Global learner map and online count
+/about                    Founder story and product mission
+/blog                     SEO blog index
+/blog/:slug               Static article page
+/admin                    Content, users, analytics, forum moderation, settings</code></pre>
+
+        <h3>API map</h3>
+        <pre><code>GET    /api/health
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/refresh
+POST   /api/auth/logout
+
+GET    /api/levels
+GET    /api/lessons/:lessonId
+GET    /api/progress
+GET    /api/progress/continue
+POST   /api/progress/batch
+PUT    /api/progress/:lessonId
+POST   /api/progress/:lessonId/skip
+GET    /api/progress/achievements
+
+GET    /api/forum/wishes
+POST   /api/forum/wishes
+POST   /api/forum/wishes/:id/vote
+GET    /api/forum/thread/:id
+POST   /api/forum/thread/:id/replies
+
+GET    /api/map/online
+POST   /api/events
+GET    /api/settings/theme
+GET    /api/settings/tts
+GET    /api/palettes
+
+POST   /api/onboarding/ai-plan
+GET    /api/admin/content-health
+POST   /api/admin/lessons/validate</code></pre>
+
+        <h3 id="schemas">Core data schemas</h3>
+        <pre><code>type Level = {
+  id: number;
+  displayNumber: number;
+  slug: string;
+  title: string;
+  subtitle: string;
+  lessonPrefix: string;
+  lessonCount: number;
+  section?: "core" | "experts";
+  mvp: boolean;
+};
+
+type Lesson = {
+  id: string;                // "8.1"
+  levelId: number;
+  title: string;
+  subtitle: string;
+  estimatedMinutes: number;
+  commandsIntroduced?: CommandReference[];
+  initialFs?: FileTree;
+  initialDir?: string;
+  curlMocks?: Record&lt;string, CurlMock&gt;;
+  sections: LessonSection[];
+  nextLessonId?: string;
+  completionMessage?: string;
+  milestone?: Milestone;
+};
+
+type LessonSection =
+  | NarrativeSection
+  | QuizSection
+  | FillInBlankSection
+  | MatchSection
+  | TerminalStepSection
+  | TerminalPreviewSection
+  | InteractiveTreeSection
+  | PathBuilderSection
+  | CodeExampleSection
+  | DragSortSection
+  | ProgramSimSection
+  | StepThroughSection
+  | GuideStepSection
+  | PromptTemplateSection
+  | ChecklistSection;
+
+type ProgressState = {
+  completedLessons: string[];
+  skippedLessons: string[];
+  currentLessonId: string;
+  currentSectionIndex: number;
+  levelProgress: Record&lt;number, number&gt;;
+  completionDates: Record&lt;string, string&gt;;
+  sectionHighWaterMark: Record&lt;string, number&gt;;
+  version: number;
+};</code></pre>
+      </section>
+
+      <section class="section" id="lesson-engine">
+        <h2>Lesson Engine</h2>
+        <p>The lesson engine is the heart of the product. Build it before you build the dashboard, forum, admin, or AI plan. Every lesson is a sequence of small sections. Each section has a clear interaction, a completion condition, and an event for analytics.</p>
+
+        <div class="two">
+          <div class="card">
+            <h3>Core section types</h3>
+            <ul>
+              <li><code>narrative</code>: short explanation, analogy, key points, tip, optional TTS.</li>
+              <li><code>quiz</code>: multiple choice, keyboard shortcuts, explanation, confetti on correct.</li>
+              <li><code>fillInBlank</code>: command or concept answer, alternates, reveal after two tries.</li>
+              <li><code>match</code>: pair concepts with definitions or commands with results.</li>
+              <li><code>terminalStep</code>: learner must run a command in the virtual terminal.</li>
+              <li><code>promptTemplate</code>: learner edits or copies a strong Codex prompt.</li>
+              <li><code>checklist</code>: setup or verification checklist with durable completion.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Lesson shell controls</h3>
+            <ul>
+              <li>Progress bar with current section and total sections.</li>
+              <li>Back, close, hint, skip, note, help, report bug, and review mode controls.</li>
+              <li>Keyboard shortcuts: Enter/ArrowRight for continue, ArrowLeft for back, Esc for home.</li>
+              <li>Floating cheat sheet when lessons introduce commands.</li>
+              <li>Completion screen with session stats and next lesson CTA.</li>
+              <li>Review mode for completed lessons that shows answers instead of requiring inputs.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Virtual terminal requirements</h3>
+        <p>The terminal should be a browser-safe simulation for early learning. Later lessons can tell learners when to switch to their real terminal and real Codex installation.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Subsystem</th>
+              <th>Requirements</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Virtual file system</td>
+              <td>In-memory tree with directories, files, current directory, home directory, path resolution, JSON import/export, and reset per lesson.</td>
+            </tr>
+            <tr>
+              <td>Command parser</td>
+              <td>Tokenize quotes, expand variables, support relative/absolute paths, basic globs, pipes, redirects, append redirects, and helpful errors.</td>
+            </tr>
+            <tr>
+              <td>Commands</td>
+              <td><code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>cp</code>, <code>mv</code>, <code>cat</code>, <code>head</code>, <code>tail</code>, <code>echo</code>, <code>grep</code>, <code>rg</code>, <code>wc</code>, <code>export</code>, <code>env</code>, <code>curl</code>, <code>git</code>, <code>help</code>, <code>clear</code>.</td>
+            </tr>
+            <tr>
+              <td>Git simulator</td>
+              <td>Support init, status, add, commit, log, diff, checkout, branch, merge, remote, push, pull, and clone. Keep messages beginner-friendly but close to real Git.</td>
+            </tr>
+            <tr>
+              <td>Codex simulator</td>
+              <td>For early Codex lessons, simulate <code>codex</code>, <code>codex --help</code>, <code>/status</code>, <code>/plan</code>, <code>/review</code>, <code>/permissions</code>, and <code>codex exec</code> concepts without needing a real install.</td>
+            </tr>
+            <tr>
+              <td>Validation</td>
+              <td>Terminal steps validate command, output, file system state, current directory, Git state, environment variables, or curl mock response.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="design-system">
+        <h2>Design System</h2>
+        <p>The reference uses a dark terminal identity, compact layout, monospace headings, low-radius panels, vivid CTA color, and dense course maps. zero2codex should feel related but not copied. Use a Codex-focused identity: calm black, graphite, green, blue, and amber. Avoid duplicating the exact zero2claude accent system.</p>
+
+        <div class="three">
+          <div class="card">
+            <h3>Layout</h3>
+            <ul>
+              <li>Course map as first screen, not a marketing landing page.</li>
+              <li>Compact sticky header with brand, language, theme, map, nav, login, sign-up.</li>
+              <li>Level rows with progress bars and expandable lesson lists.</li>
+              <li>Lesson runner with fixed header, scroll body, and sticky bottom CTA.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Visual Language</h3>
+            <ul>
+              <li>Monospace for brand, headings, labels, and command-like UI.</li>
+              <li>Readable sans for lesson body text.</li>
+              <li>Terminal chrome for labs and blog cards.</li>
+              <li>8px or smaller radius for most UI. Use 12px only for modal surfaces.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Accessibility</h3>
+            <ul>
+              <li>Keyboard-first lessons and quizzes.</li>
+              <li>ARIA roles for quiz radio groups and terminal logs.</li>
+              <li>Font size control and high contrast themes.</li>
+              <li>RTL-aware layout and translatable copy from day one.</li>
+            </ul>
+          </div>
+        </div>
+
+        <pre><code>:root {
+  --bg-primary: #08090b;
+  --bg-card: #111319;
+  --bg-elevated: #181b23;
+  --bg-terminal: #050607;
+  --text-primary: #eef2f1;
+  --text-secondary: #9aa6a3;
+  --accent: #32d583;
+  --accent-blue: #5cc8ff;
+  --accent-yellow: #f5b84b;
+  --border: rgba(238, 242, 241, 0.12);
+  --radius: 8px;
+}</code></pre>
+      </section>
+
+      <section class="section" id="curriculum">
+        <h2>151-Lesson Curriculum</h2>
+        <p>This curriculum mirrors the reference scale and beginner progression, but the advanced half becomes Codex-specific. The first seven levels teach the world Codex operates in. The next levels teach Codex itself, durable agent workflows, and shipping habits.</p>
+
+        <div class="callout">
+          <h3>Curriculum rule</h3>
+          <p>Every lesson must contain at least one active moment: answer, command, file-tree click, prompt edit, checklist item, mini-debug, review step, or reflection. No passive walls of text.</p>
+        </div>
+
+        <details open>
+          <summary>Level 1: Computers Are Not Magic <span>6 lessons</span></summary>
+          <ol>
+            <li>What Is a File?</li>
+            <li>What Is a Folder?</li>
+            <li>What Is a File Path?</li>
+            <li>File Types and What Is Inside</li>
+            <li>What Is a Program?</li>
+            <li>What Is a Terminal?</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 2: Your First 30 Minutes in the Terminal <span>13 lessons</span></summary>
+          <ol>
+            <li>Where Am I? Use <code>pwd</code></li>
+            <li>What Is Here? Use <code>ls</code></li>
+            <li>Moving Into Folders with <code>cd</code></li>
+            <li>Going Back Up with <code>cd ..</code></li>
+            <li>Going Home with <code>cd ~</code></li>
+            <li>Creating Folders with <code>mkdir</code></li>
+            <li>Creating Files with <code>touch</code></li>
+            <li>Deleting Files with <code>rm</code></li>
+            <li>Deleting Folders with <code>rm -r</code></li>
+            <li>Copying Files with <code>cp</code></li>
+            <li>Moving and Renaming with <code>mv</code></li>
+            <li>Putting It All Together: Build a Folder Project</li>
+            <li>Level 2 Review</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 3: Reading and Writing Files <span>13 lessons</span></summary>
+          <ol>
+            <li>Looking Inside Files with <code>cat</code></li>
+            <li>Peeking at the Top with <code>head</code></li>
+            <li>Peeking at the End with <code>tail</code></li>
+            <li>Printing Text with <code>echo</code></li>
+            <li>Writing to Files with <code>&gt;</code></li>
+            <li>Appending to Files with <code>&gt;&gt;</code></li>
+            <li>Copying File Contents</li>
+            <li>Searching Inside Files with <code>grep</code></li>
+            <li>Searching Across Folders with <code>grep -r</code> and <code>rg</code></li>
+            <li>Chaining Commands with Pipes</li>
+            <li>Counting with <code>wc</code></li>
+            <li>Detective Work: Investigate Logs</li>
+            <li>Level 3 Review</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 4: Your Code Has a History <span>17 lessons</span></summary>
+          <ol>
+            <li>Why Version Control Exists</li>
+            <li>Starting a Repository with <code>git init</code></li>
+            <li>Checking State with <code>git status</code></li>
+            <li>Staging Changes with <code>git add</code></li>
+            <li>Your First Commit</li>
+            <li>The Edit, Add, Commit Cycle</li>
+            <li>Viewing History with <code>git log</code></li>
+            <li>Seeing What Changed with <code>git diff</code></li>
+            <li>Undoing Changes Safely</li>
+            <li>Understanding GitHub</li>
+            <li>Pushing to GitHub</li>
+            <li>Downloading Projects with <code>git clone</code></li>
+            <li>Creating Branches</li>
+            <li>Merging Branches</li>
+            <li>Pull Requests and Reviews</li>
+            <li>Writing Good Commits</li>
+            <li>Full Git Workflow Challenge</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 5: How Software Actually Works <span>14 lessons</span></summary>
+          <ol>
+            <li>What Is Code?</li>
+            <li>Programming Languages</li>
+            <li>What Is a Website, Really?</li>
+            <li>Client vs Server</li>
+            <li>HTTP: How Computers Talk</li>
+            <li>What Is an API?</li>
+            <li>JSON: The Universal Data Format</li>
+            <li>What Is a Database?</li>
+            <li>SQL: Talking to Databases</li>
+            <li>Frontend vs Backend</li>
+            <li>The Tech Stack</li>
+            <li>What Is the Cloud?</li>
+            <li>Deployment</li>
+            <li>DNS and Domains</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 6: Talk to the Internet <span>12 lessons</span></summary>
+          <ol>
+            <li>What Is a URL, Really?</li>
+            <li>Your First <code>curl</code></li>
+            <li>Query Parameters in Action</li>
+            <li>Status Codes Are a Language</li>
+            <li>Request Headers</li>
+            <li>Sending Data with POST</li>
+            <li>Your First Real Public API</li>
+            <li>OpenAI API Keys and Secret Safety</li>
+            <li>Calling the GitHub API</li>
+            <li>Reading API Documentation</li>
+            <li>When API Requests Go Wrong</li>
+            <li>From <code>curl</code> to Code</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 7: Building With Real Tools <span>15 lessons</span></summary>
+          <ol>
+            <li>Installing Node.js</li>
+            <li>Your First JavaScript REPL</li>
+            <li>Running a JavaScript File</li>
+            <li>What Is npm?</li>
+            <li>Creating a Project</li>
+            <li>Installing Packages</li>
+            <li><code>.gitignore</code> and Environment Files</li>
+            <li>Hello World Server</li>
+            <li>Running Your Server</li>
+            <li>What Is localhost?</li>
+            <li>Adding Routes</li>
+            <li>Serving JSON</li>
+            <li>Serving HTML</li>
+            <li>Stopping, Restarting, and Debugging</li>
+            <li>Level 7 Challenge: Build a Tiny API</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 8: Codex - Your Coding Agent <span>16 lessons</span></summary>
+          <ol>
+            <li>What Is Codex?</li>
+            <li>Choosing a Surface: App, CLI, IDE, or Cloud</li>
+            <li>Installing and Authenticating the Codex CLI</li>
+            <li>Your First Codex Thread</li>
+            <li>Giving Codex the Right Context</li>
+            <li>Reading Code with Codex</li>
+            <li>Creating Files with Codex</li>
+            <li>Editing Existing Code</li>
+            <li>Letting Codex Run Commands</li>
+            <li>Prompt Patterns: Goal, Context, Constraints, Done When</li>
+            <li>Plan Mode for Fuzzy Work</li>
+            <li>Reviewing the Diff</li>
+            <li>Debugging with Codex</li>
+            <li>Git Workflow with Codex</li>
+            <li>When Not to Use Codex</li>
+            <li>Level 8 Challenge: Build a Small Feature with Codex</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 9: Project Memory and AGENTS.md <span>5 lessons</span></summary>
+          <ol>
+            <li>What Is Project Memory?</li>
+            <li>Writing Your First <code>AGENTS.md</code></li>
+            <li>Layered Instructions and Overrides</li>
+            <li>Defining "Done" for Codex</li>
+            <li>Keeping Instructions Short and Useful</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 10: MCP and Connected Tools <span>5 lessons</span></summary>
+          <ol>
+            <li>What Is MCP?</li>
+            <li>Adding Your First MCP Server</li>
+            <li>Using Docs, GitHub, Browser, or Design Tools Safely</li>
+            <li>OAuth, Tokens, and Approval Boundaries</li>
+            <li>MCP Challenge: Add One Useful Tool to a Workflow</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 11: Context Is Everything <span>5 lessons</span></summary>
+          <ol>
+            <li>The Context Window</li>
+            <li>Threads, Resume, Fork, and Search</li>
+            <li>Handoff Notes for Future Sessions</li>
+            <li>Compaction and Long-Running Work</li>
+            <li>Context Toolkit Challenge</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 12: Codex Advanced Workflows <span>5 lessons</span></summary>
+          <ol>
+            <li>Worktrees and Handoff</li>
+            <li>In-App Browser and Visual QA</li>
+            <li>Automations and Recurring Checks</li>
+            <li>Subagents and Parallel Exploration</li>
+            <li><code>codex exec</code> and CI Automation</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 13: Junior Developer Patterns <span>12 lessons</span></summary>
+          <ol>
+            <li>Reading Someone Else's Code</li>
+            <li>Understanding a Function You Did Not Write</li>
+            <li>The Debugging Mindset</li>
+            <li>Logs, Breakpoints, and Tests</li>
+            <li>Finding Answers Without Guessing</li>
+            <li>Environment Variables and Secrets</li>
+            <li>Basic Security Awareness</li>
+            <li>Deploying to the Internet</li>
+            <li>Custom Domains</li>
+            <li>The Professional Developer Workflow</li>
+            <li>Managing Cost, Time, and Model Choice</li>
+            <li>What to Learn Next</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 14: The Project - Build and Ship a Real Product <span>10 lessons</span></summary>
+          <ol>
+            <li>Planning the Capstone</li>
+            <li>Scaffolding the Project with Codex</li>
+            <li>Building the Backend</li>
+            <li>Building the UI</li>
+            <li>Connecting Client and Server</li>
+            <li>Testing and Debugging with Codex</li>
+            <li>Browser QA and Visual Polish</li>
+            <li>Deploying the Project</li>
+            <li>Writing README and Handoff Docs</li>
+            <li>Launch, Reflect, and Keep Building</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 15: Codex Subagents <span>1 lesson</span></summary>
+          <ol>
+            <li>Command a Small Team of Agents</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 16: Codex from Anywhere <span>1 lesson</span></summary>
+          <ol>
+            <li>Remote, Cloud, and Mobile-Friendly Codex Workflows</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Level 17: Models, Cost, and Workflows <span>1 lesson</span></summary>
+          <ol>
+            <li>Choose the Right Model, Reasoning Effort, and Workflow</li>
+          </ol>
+        </details>
+      </section>
+
+      <section class="section" id="gamification">
+        <h2>Gamification and Retention</h2>
+        <p>The course should reward useful learning behavior, not empty points. Focus on completion, return visits, review, hands-on commands, shipping milestones, and community contribution.</p>
+
+        <div class="two">
+          <div class="card">
+            <h3>Progress mechanics</h3>
+            <ul>
+              <li>Level progress bars with completed/skipped counts.</li>
+              <li>Current lesson resume card.</li>
+              <li>Section high-water mark so returning to lessons feels natural.</li>
+              <li>Review queue for lessons completed more than 72 hours ago.</li>
+              <li>Test-out challenge at the start of each level.</li>
+              <li>Cheat sheet generated from commands introduced in the level.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Achievement ideas</h3>
+            <ul>
+              <li>First Command: run your first terminal command.</li>
+              <li>Path Finder: navigate five directories without a hint.</li>
+              <li>Git Saver: complete your first add/commit cycle.</li>
+              <li>Context Builder: write a prompt with goal, context, constraints, and done criteria.</li>
+              <li>Reviewer: use Codex to review a diff and fix one issue.</li>
+              <li>Shipper: deploy the capstone and write handoff docs.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Analytics events</h3>
+        <pre><code>lesson_start
+section_advance
+lesson_complete
+lesson_skip
+quiz_answer
+fill_in_blank_answer
+terminal_command
+terminal_validation_pass
+terminal_validation_fail
+hint_opened
+cheat_sheet_opened
+review_mode_enabled
+note_created
+help_requested
+wish_created
+wish_voted
+signup_started
+signup_completed
+ai_plan_generated</code></pre>
+      </section>
+
+      <section class="section" id="build-plan">
+        <h2>Build Plan</h2>
+        <p>Build in thin slices. The first public version does not need all 151 lessons. It needs the course map, lesson engine, terminal simulator, first 10 to 20 lessons, and a path to keep adding content without rewriting the app.</p>
+
+        <div class="timeline">
+          <div class="phase">
+            <b>Phase 0</b>
+            <div>
+              <h3>Product setup</h3>
+              <p>Write README, AGENTS.md, content style guide, lesson schema, and visual tokens. Keep the repo beginner-friendly from day one.</p>
+              <ul>
+                <li>Create app scaffold.</li>
+                <li>Add lint, format, typecheck, and preview scripts.</li>
+                <li>Add sample lesson JSON and validator.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 1</b>
+            <div>
+              <h3>Static course shell</h3>
+              <p>Build the home course map, level cards, lesson list, route skeleton, dark/light theme, font size control, and localStorage progress.</p>
+              <ul>
+                <li>No backend yet.</li>
+                <li>Use content files for levels and lessons.</li>
+                <li>Make every route responsive.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 2</b>
+            <div>
+              <h3>Lesson engine</h3>
+              <p>Implement narrative, quiz, fill-in-blank, match, checklist, code example, and prompt template sections. Add keyboard navigation and review mode.</p>
+              <ul>
+                <li>Ship first six lessons from Level 1.</li>
+                <li>Add completion screen and next lesson flow.</li>
+                <li>Track analytics locally for debugging.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 3</b>
+            <div>
+              <h3>Virtual terminal</h3>
+              <p>Add VFS, command parser, command history, terminal UI, validation, and terminal steps for Levels 2 to 4.</p>
+              <ul>
+                <li>Implement file commands first.</li>
+                <li>Add grep, pipes, redirects, and wc next.</li>
+                <li>Add Git simulator before Git lessons.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 4</b>
+            <div>
+              <h3>Codex labs</h3>
+              <p>Add simulated Codex commands, prompt builders, diff review exercises, AGENTS.md exercises, permission scenarios, worktree diagrams, and browser QA labs.</p>
+              <ul>
+                <li>Keep simulations honest. Mark when learners need the real Codex app or CLI.</li>
+                <li>Use official OpenAI docs as source for all Codex behavior.</li>
+                <li>Add external-link cards for official setup pages.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 5</b>
+            <div>
+              <h3>Accounts and sync</h3>
+              <p>Add register/login, progress API, refresh tokens, achievement API, dashboard, notes, and review queue.</p>
+              <ul>
+                <li>Migrate anonymous local progress into the account after sign-up.</li>
+                <li>Never block browsing the course map behind login.</li>
+                <li>Keep account creation under 60 seconds.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 6</b>
+            <div>
+              <h3>Community and growth</h3>
+              <p>Add Wishes forum, public roadmap statuses, blog, learner map, email capture, and a founder/about page.</p>
+              <ul>
+                <li>Moderate community content from day one.</li>
+                <li>Start the blog with high-intent beginner search topics.</li>
+                <li>Use wish votes as roadmap research.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phase">
+            <b>Phase 7</b>
+            <div>
+              <h3>Admin and content operations</h3>
+              <p>Only after content stabilizes, add an admin area for lessons, translations, palettes, TTS, analytics, email, and validation.</p>
+              <ul>
+                <li>Build content validation before visual admin editing.</li>
+                <li>Require preview before publishing a lesson.</li>
+                <li>Log every admin publish action.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="content-production">
+        <h2>Content Production System</h2>
+        <p>The biggest risk is not code. It is content volume and quality. Build a repeatable lesson writing workflow so 151 lessons can be produced without losing consistency.</p>
+
+        <div class="three">
+          <div class="card">
+            <h3>Lesson formula</h3>
+            <ol>
+              <li>Open with the learner's current confusion.</li>
+              <li>Explain the concept in one screen.</li>
+              <li>Show a concrete example.</li>
+              <li>Make the learner do something.</li>
+              <li>Ask a small check question.</li>
+              <li>End with a useful next step.</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>Voice rules</h3>
+            <ul>
+              <li>Beginner-safe, direct, and concrete.</li>
+              <li>No condescension.</li>
+              <li>No jargon before it is earned.</li>
+              <li>Use analogies, then return to the real machine.</li>
+              <li>Show commands exactly and explain what changed.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Validation rules</h3>
+            <ul>
+              <li>Every lesson has at least one active section.</li>
+              <li>Every command has a description and expected outcome.</li>
+              <li>Every Codex claim links to official OpenAI docs.</li>
+              <li>Every terminal lesson can reset cleanly.</li>
+              <li>Every challenge has success and failure feedback.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Lesson authoring template</h3>
+        <pre><code>{
+  "id": "8.10",
+  "levelId": 8,
+  "title": "Prompt Patterns: Goal, Context, Constraints, Done When",
+  "subtitle": "Give Codex enough shape to do reliable work",
+  "estimatedMinutes": 8,
+  "sections": [
+    {
+      "type": "narrative",
+      "content": "Codex works best when it knows what you want, what matters, what boundaries to follow, and how to prove the work is done.",
+      "keyPoints": [
+        "Goal: the outcome you want.",
+        "Context: files, errors, screenshots, or examples Codex should inspect.",
+        "Constraints: rules Codex must follow.",
+        "Done when: how Codex should verify success."
+      ]
+    },
+    {
+      "type": "promptTemplate",
+      "instruction": "Rewrite this vague prompt into a strong Codex prompt.",
+      "startingPrompt": "make my app better",
+      "requiredParts": ["goal", "context", "constraints", "doneWhen"]
+    },
+    {
+      "type": "quiz",
+      "question": "Which part tells Codex how to verify the work?",
+      "options": ["Goal", "Context", "Constraints", "Done when"],
+      "correctIndex": 3,
+      "explanation": "Done when describes the test or observable result that proves the task is complete."
+    }
+  ]
+}</code></pre>
+      </section>
+
+      <section class="section" id="mvp">
+        <h2>MVP Definition</h2>
+        <p>The first version should be small enough to finish but impressive enough to prove the idea. The right MVP is not all 151 lessons. It is the reusable platform plus enough lessons to make the magic visible.</p>
+
+        <div class="callout">
+          <h3>MVP target</h3>
+          <p>Ship Levels 1 and 2 completely, Level 8 as a five-lesson Codex teaser, and a working terminal simulator. That gives beginners the first real learning loop and shows where the course is going.</p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Must have</th>
+              <th>Nice later</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Course map, level list, progress, lesson route, localStorage, terminal simulator, 20 to 25 lessons, responsive UI.</td>
+              <td>Accounts, dashboard, map, forum, achievements, AI onboarding, admin CMS, translations.</td>
+            </tr>
+            <tr>
+              <td>Manual content files and a schema validator.</td>
+              <td>Visual lesson editor with publish workflow.</td>
+            </tr>
+            <tr>
+              <td>Keyboard accessible quizzes and terminal steps.</td>
+              <td>TTS, notes, help requests, review queue.</td>
+            </tr>
+            <tr>
+              <td>README, AGENTS.md, contribution/content guide.</td>
+              <td>Automated content health dashboard.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section" id="qa">
+        <h2>Quality Bar</h2>
+        <p>zero2codex is a teaching product. Bugs are not just bugs. They become learner confusion. QA should cover code, content, interaction, accessibility, and pedagogy.</p>
+
+        <div class="two">
+          <div class="card">
+            <h3>Automated checks</h3>
+            <ul>
+              <li>Typecheck the app.</li>
+              <li>Lint and format.</li>
+              <li>Validate every lesson JSON file.</li>
+              <li>Run unit tests for terminal parser and VFS.</li>
+              <li>Run integration tests for lesson completion flow.</li>
+              <li>Run Playwright smoke tests for home, lesson, terminal, mobile layout.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Manual review</h3>
+            <ul>
+              <li>Can a beginner understand the lesson without prior jargon?</li>
+              <li>Does each interaction teach the intended concept?</li>
+              <li>Can the learner recover from a mistake?</li>
+              <li>Does the command output feel close to a real terminal?</li>
+              <li>Are Codex safety boundaries explicit?</li>
+              <li>Does the lesson end with momentum?</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="business">
+        <h2>Digital Asset Strategy</h2>
+        <p>The free course can be the center of a business ecosystem without betraying the beginner promise. The trust asset is the course. The business layer should help people go faster, go deeper, or get support.</p>
+
+        <div class="three">
+          <div class="card">
+            <h3>Free core</h3>
+            <p>Keep the full core curriculum free. This drives sharing, SEO, goodwill, and learner trust.</p>
+          </div>
+          <div class="card">
+            <h3>Paid support</h3>
+            <p>Offer live workshops, cohorts, office hours, business build sessions, or Codex setup audits.</p>
+          </div>
+          <div class="card">
+            <h3>Paid assets</h3>
+            <p>Sell optional templates: AGENTS.md packs, Codex prompt libraries, project starter kits, testing checklists, and workflow automations.</p>
+          </div>
+        </div>
+
+        <h3>Launch sequence</h3>
+        <ol>
+          <li>Publish the MVP course with a founder story.</li>
+          <li>Write 5 SEO essays: "What is Codex?", "Codex CLI for beginners", "AGENTS.md explained", "Coding with AI safely", and "How to learn coding with Codex".</li>
+          <li>Add email capture for launch updates and live workshop invites.</li>
+          <li>Add Wishes forum once there is traffic.</li>
+          <li>Turn repeated user requests into paid templates or free lessons.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="ai-prompts">
+        <h2>Prompts For Future AI Coding Sessions</h2>
+        <p>Use these prompts to keep future sessions focused and aligned with this build guide.</p>
+
+        <h3>Scaffold the app</h3>
+        <pre><code>Read docs/ZERO2CODEX_BUILD_GUIDE.html and the memory docs first.
+Scaffold the zero2codex MVP as a Vite + React + TypeScript app.
+Implement only:
+- course map home route
+- level/lesson content files
+- typed lesson schema
+- localStorage progress store
+- lesson route shell
+- narrative, quiz, fill-in-blank, checklist section renderers
+- responsive dark terminal-inspired design tokens
+Done when npm install, npm run build, and a browser smoke test pass.</code></pre>
+
+        <h3>Build the terminal simulator</h3>
+        <pre><code>Read docs/ZERO2CODEX_BUILD_GUIDE.html, especially the virtual terminal requirements.
+Implement the browser-safe terminal simulator with:
+- virtual file system
+- current directory and path resolution
+- command parser
+- pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, echo, clear, help
+- command history and terminal UI
+- validation helpers for terminalStep lessons
+Add unit tests for path resolution and each command.
+Do not add real shell execution.</code></pre>
+
+        <h3>Write a lesson batch</h3>
+        <pre><code>Use the lesson authoring rules in docs/ZERO2CODEX_BUILD_GUIDE.html.
+Write lessons for Level 1 in the project's lesson schema.
+Each lesson must include:
+- one short narrative section
+- one active interaction
+- one check question
+- beginner-friendly language
+- no copied text from zero2claude
+Run the lesson validator and fix all schema errors.</code></pre>
+
+        <h3>Add Codex lessons safely</h3>
+        <pre><code>Use official OpenAI Codex docs as the source for Codex behavior.
+Create the first five Level 8 lessons:
+1. What Is Codex?
+2. Choosing a Surface
+3. Installing and Authenticating the CLI
+4. Your First Codex Thread
+5. Giving Codex the Right Context
+Include source links in lesson metadata.
+Do not invent pricing, model availability, or unsupported commands.</code></pre>
+      </section>
+
+      <section class="section" id="sources">
+        <h2>Research Sources</h2>
+        <p>These are the public sources and official docs used to build this guide. Public asset inspection was used for architecture clues, not to copy proprietary code into zero2codex.</p>
+
+        <div class="source-list">
+          <ul>
+            <li><a href="https://zero2claude.dev/">zero2claude.dev home</a></li>
+            <li><a href="https://zero2claude.dev/about">zero2claude.dev about page</a></li>
+            <li><a href="https://zero2claude.dev/forum">zero2claude.dev Wishes forum</a></li>
+            <li><a href="https://zero2claude.dev/map">zero2claude.dev learner map</a></li>
+            <li><a href="https://zero2claude.dev/blog/">zero2claude.dev blog</a></li>
+            <li><a href="https://zero2claude.dev/assets/index-ltKHQfSy.js">zero2claude public JS bundle inspected for route and architecture clues</a></li>
+            <li><a href="https://zero2claude.dev/assets/index-B0qagswD.css">zero2claude public CSS bundle inspected for design-token clues</a></li>
+            <li><a href="https://zero2claude.dev/assets/LessonView-B3TADazI.js">zero2claude public lesson-view chunk inspected for section-type clues</a></li>
+            <li><a href="https://zero2claude.dev/assets/Terminal-COHvLLdl.js">zero2claude public terminal chunk inspected for terminal-simulator clues</a></li>
+            <li><a href="https://developers.openai.com/codex/overview">OpenAI Codex overview</a></li>
+            <li><a href="https://developers.openai.com/codex/learn/best-practices">OpenAI Codex best practices</a></li>
+            <li><a href="https://developers.openai.com/codex/app/features">OpenAI Codex app features</a></li>
+            <li><a href="https://developers.openai.com/codex/cli/features">OpenAI Codex CLI features</a></li>
+            <li><a href="https://developers.openai.com/codex/app/browser">OpenAI Codex in-app browser</a></li>
+            <li><a href="https://developers.openai.com/codex/app/worktrees">OpenAI Codex worktrees</a></li>
+            <li><a href="https://developers.openai.com/codex/skills">OpenAI Codex skills</a></li>
+            <li><a href="https://developers.openai.com/codex/guides/agents-md">OpenAI Codex AGENTS.md guide</a></li>
+            <li><a href="https://developers.openai.com/codex/mcp">OpenAI Codex MCP guide</a></li>
+            <li><a href="https://developers.openai.com/codex/concepts/subagents">OpenAI Codex subagents concept guide</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        <p>Prepared for the zero2codex repository on 2026-06-23. Next best action: scaffold the MVP app and keep this guide updated as decisions become real code.</p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
