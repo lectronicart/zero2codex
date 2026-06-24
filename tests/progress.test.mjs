@@ -33,6 +33,30 @@ test("progress saves and reloads from localStorage-compatible storage", () => {
   assert.equal(reloaded.completionDates["2.1"], "2026-06-23T00:00:00.000Z");
 });
 
+test("Level 1 progress persists through the existing storage shape", () => {
+  const storage = memoryStorage();
+  let progress = updateLessonPosition(defaultProgressState, "1.6", 7);
+  progress = completeLesson(progress, "1.6", "2026-06-23T00:00:00.000Z");
+  saveProgress(progress, storage);
+
+  const reloaded = loadProgress(storage);
+  assert.ok(reloaded.completedLessons.includes("1.6"));
+  assert.equal(reloaded.currentLessonId, "1.6");
+  assert.equal(reloaded.sectionHighWaterMark["1.6"], 7);
+});
+
+test("Level 4 progress persists through the existing storage shape", () => {
+  const storage = memoryStorage();
+  let progress = updateLessonPosition(defaultProgressState, "4.17", 2);
+  progress = completeLesson(progress, "4.17", "2026-06-24T00:00:00.000Z");
+  saveProgress(progress, storage);
+
+  const reloaded = loadProgress(storage);
+  assert.ok(reloaded.completedLessons.includes("4.17"));
+  assert.equal(reloaded.currentLessonId, "4.17");
+  assert.equal(reloaded.sectionHighWaterMark["4.17"], 2);
+});
+
 test("restarting a lesson clears section resume state", () => {
   const progress = updateLessonPosition(defaultProgressState, "2.1", 2);
   const restarted = restartLesson(progress, "2.1");

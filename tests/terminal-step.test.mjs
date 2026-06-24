@@ -80,3 +80,44 @@ test("terminalStep validation checks latest command output", () => {
   state = runTerminalCommand(state, 'grep "Codex" notes.txt');
   assert.deepEqual(validateTerminalStep(step, state), { ok: true, message: "found" });
 });
+
+test("terminalStep validation checks Git repository state", () => {
+  const step = {
+    expectedCommands: ["git add .", 'git commit -m "Start project"'],
+    expectedGit: {
+      currentBranch: "main",
+      commitCount: 1,
+      latestCommitMessage: "Start project",
+      clean: true,
+      snapshot: [{ path: "README.md", content: "# Project" }],
+    },
+    successMessage: "saved",
+    failureFeedback: "not saved",
+  };
+  let state = createTerminalSession({
+    initialFileSystem: {
+      home: {
+        type: "directory",
+        children: {
+          codex: {
+            type: "directory",
+            children: {
+              project: {
+                type: "directory",
+                children: { "README.md": "# Project" },
+              },
+            },
+          },
+        },
+      },
+    },
+    startingDirectory: "/home/codex/project",
+    setupCommands: ["git init"],
+  });
+  state = runTerminalCommand(state, "git add .");
+  state = runTerminalCommand(state, 'git commit -m "Start project"');
+  assert.deepEqual(validateTerminalStep(step, state), {
+    ok: true,
+    message: "saved",
+  });
+});

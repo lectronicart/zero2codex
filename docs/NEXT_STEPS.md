@@ -1,103 +1,95 @@
 # Next Steps
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
-This is the practical starter backlog. The project direction is defined in `docs/ZERO2CODEX_BUILD_GUIDE.html`: build zero2codex, a Codex-focused version of the zero2claude-style beginner course.
+## Now
 
-## Current Task List
+1. Review and preserve the current implementation.
+   - Run `git diff --check`.
+   - Review the Level 1 and Level 4 changes.
+   - Decide whether to include
+     `docs/lectronicart_project_operating_system_v1/`.
+   - Stage and commit the approved work.
 
-1. Decide what to do with `docs/lectronicart_project_operating_system_v1/`. `next exact action`
-   - The folder is currently untracked.
-   - Inspect it before adding, ignoring, moving, or deleting anything.
-   - Do not commit it blindly.
+2. Keep the live project preview available.
+   - Use `http://127.0.0.1:4187/`.
+   - Keep the in-app browser tab visible.
+   - Reload and test the affected workflow after frontend changes.
 
-2. Create a viewable hosted preview. `not started`
-   - The project is viewable locally with `npm run dev -- --host 127.0.0.1`.
-   - No deployed URL exists yet.
-   - `main` is pushed to GitHub, so a static host can now be configured.
+3. Implement Level 5, "How Software Actually Works."
+   - Build all 14 lessons.
+   - Use browser-safe conceptual interactions.
+   - Do not add real servers, APIs, databases, DNS changes, or device access.
+   - Prepare learners for Level 6 HTTP practice.
 
-3. Write playable Level 1 lessons. `recommended next Goal Mode task`
-   - Use the existing lesson schema and lesson runner.
-   - Every Level 1 lesson needs at least one active interaction.
-   - Keep copy original, concrete, and beginner-friendly.
-   - Re-run the full verification set.
+## Next
 
-4. Plan Supabase email auth. `not started`
-   - Google OAuth remains postponed.
-   - Decide whether local/MVP preview should disable email confirmation.
-   - Add `.env.example` only when Supabase variables are actually needed.
+4. Decide the MVP account sequence.
+   - Select the Supabase project.
+   - Decide whether email confirmation is required for the local/MVP preview.
+   - Add email/password registration and login before progress sync.
 
-5. Implement email account creation and sign-in. `not started`
-   - Add Supabase client setup.
-   - Build `/register`, `/login`, and logout.
-   - Keep the course map public.
-   - Protect lesson routes only once progress sync is ready.
+5. Add authenticated progress sync.
+   - Preserve the localStorage fallback.
+   - Migrate anonymous progress after signup or login.
 
-6. Add authenticated progress sync. `not started`
-   - Local progress exists now.
-   - Authenticated Supabase sync comes second.
-   - Migrate anonymous progress after signup/login.
+6. Create a hosted preview.
+   - The current preview is local only.
+   - Record any deployed URL in `README.md` and `docs/HANDOFF.md`.
 
-7. Add starter achievements. `not started`
-   - First Command.
-   - Path Finder.
-   - Level 2 Complete.
+7. Add the first Codex teaser lessons.
+   - Use current official OpenAI documentation.
+   - Keep simulated and real Codex actions clearly distinguished.
 
-8. Add Codex teaser lessons. `not started`
-   - Use official OpenAI docs for Codex-specific claims.
-   - Keep simulations honest and clearly labeled.
+## Later
 
-9. Extend terminal for future levels. `Level 3 slice complete`
-   - Level 3 now supports head, tail, grep, rg, wc, one pipe, and `>` / `>>`.
-   - Add Git simulation only when Level 4 needs it.
-   - Do not execute real shell commands in the browser.
+- Add starter achievements.
+- Build Levels 6 and 7.
+- Expand Level 8 and advanced Codex workflows.
+- Add review mode, dashboard, notes, community, analytics, and admin features
+  only after the core learning loop is validated.
 
-10. Update project memory after each implementation slice. `ongoing`
-   - Add major choices to `docs/DECISIONS.md`.
-   - Update current facts in `docs/PROJECT_MEMORY.md`.
-   - Add a fresh summary to `docs/HANDOFF.md`.
+## Completed
 
-## Current Verification Commands
+- Course shell, routes, visual tokens, and 17-level course map.
+- Local progress persistence.
+- Complete playable Level 1.
+- Complete playable Level 2.
+- Complete playable Level 3.
+- Browser-safe terminal and virtual filesystem.
+- Browser-safe Git simulator.
+- Complete playable Level 4 and Full Git Workflow Challenge.
+- Unit, content, build, accessibility-oriented, responsive, and Playwright
+  verification for the current learning path.
 
-Run these before handoff when dependencies are installed:
+## Verification Commands
 
 ```sh
 npm run typecheck
 npm run lint
 npm run test
+npm run test:integration
 npm run validate:content
 npm run build
 ```
 
-## Good First AI Prompt
-
-Use a prompt like this when returning to the project:
+## Suggested Next Goal Prompt
 
 ```text
-Read the docs folder first. Then write the complete Level 1 playable lesson set using the existing lesson schema and lesson runner. Keep content original and beginner-friendly, add active interactions to every lesson, and run npm run typecheck, npm run lint, npm run test, npm run validate:content, and npm run build.
+Read README.md, AGENTS.md, docs/HANDOFF.md, docs/DECISIONS.md,
+docs/NEXT_STEPS.md, the build guide, and the Level 4 handoff. Confirm the live
+preview is running at http://127.0.0.1:4187/. Then implement all 14 Level 5
+lessons using original, beginner-safe, browser-only conceptual interactions.
+Preserve Levels 1 through 4 and run the complete verification suite.
 ```
-
-## Current Viewable Version
-
-Local only:
-
-```sh
-npm run dev -- --host 127.0.0.1
-```
-
-Then open:
-
-```text
-http://127.0.0.1:5173/
-```
-
-No deployed URL exists yet.
 
 ## Watch Outs
 
-- Do not copy zero2claude text, assets, or code into zero2codex.
-- Do not let future sessions ignore the build guide.
-- Do not add Google OAuth until production OAuth setup is ready.
-- Do not skip beginner-friendly documentation.
-- Do not turn placeholder routes into fake working auth.
-- Keep memory files short enough that future sessions will actually read them.
+- The worktree currently contains uncommitted Level 1 and Level 4 work.
+- Do not discard the untracked lesson, Git, foundation, test, or handoff files.
+- Do not copy zero2claude text, assets, or implementation.
+- Do not introduce real shell, GitHub, backend, or learner-device access into
+  browser simulations.
+- Google OAuth remains postponed.
+- The installed `jack-html-generator` skill requires a Codex restart before it
+  becomes available to a new session.

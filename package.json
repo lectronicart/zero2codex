@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "test:integration": "playwright test",
     "validate:content": "node --experimental-strip-types scripts/validate-content.ts"
   },
   "dependencies": {

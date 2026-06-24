@@ -22,9 +22,12 @@ Current repo shape:
 - `README.md` and `AGENTS.md` exist.
 - `package.json` and `package-lock.json` exist.
 - `src/content/course.ts` contains the 17-level, 151-lesson outline.
+- `src/content/level1Lessons.ts` contains the complete playable Level 1 lesson set.
 - `src/content/level2Lessons.ts` contains the complete playable Level 2 lesson set.
 - `src/content/level3Lessons.ts` contains the complete playable Level 3 lesson set.
+- `src/content/level4Lessons.ts` contains the complete playable Level 4 lesson set.
 - `src/terminal/` contains the browser-safe virtual terminal simulator.
+- `src/git/` contains the browser-safe Git simulator and validation.
 - `src/progress/progressStore.ts` contains localStorage progress persistence.
 - No Supabase, auth implementation, progress sync, achievements, or real terminal execution yet.
 
@@ -33,7 +36,7 @@ Current repo shape:
 - The project is in its initial setup phase.
 - The intended product is zero2codex: a free, gamified, beginner-friendly course that teaches coding fundamentals and OpenAI Codex workflows.
 - The reference inspiration is `zero2claude.dev`.
-- The current app has a public course map plus playable Level 2 and Level 3 terminal-learning slices.
+- The current app has a public course map plus playable Levels 1 through 4.
 - The desired product is a web course/app with interactive lessons, progress, gamification, terminal/Codex practice, and eventually community and admin tools.
 - Google OAuth is postponed.
 - The next auth phase should use Supabase email/password.
@@ -56,10 +59,15 @@ Current repo shape:
 - `src/content/course.ts`: course outline data.
 - `src/content/lessons.ts`: playable lesson registry.
 - `src/content/lessonSchema.ts`: Zod-backed lesson schema.
+- `src/content/level1Lessons.ts`: Level 1 foundational lesson content.
 - `src/content/level2Lessons.ts`: Level 2 terminal lesson content.
 - `src/content/level3Lessons.ts`: Level 3 reading/writing/searching lesson content.
+- `src/content/level4Lessons.ts`: Level 4 Git lesson content.
 - `src/terminal/`: path resolver, virtual file system, parser, command handlers, terminal state, and validation helpers.
+- `src/git/`: Git snapshots, staging, history, branches, merges, mocked remotes,
+  and lesson validation.
 - `src/components/LessonRunner.tsx`: section-based lesson runner.
+- `src/foundations/levelOneValidation.ts`: Level 1 interaction validation.
 - `src/components/TerminalPanel.tsx`: browser-safe terminal UI.
 - `src/styles.css`: Tailwind import and design system CSS.
 
@@ -89,6 +97,7 @@ Current verification commands:
 npm run typecheck
 npm run lint
 npm run test
+npm run test:integration
 npm run validate:content
 npm run build
 ```
@@ -96,7 +105,7 @@ npm run build
 Current browser-safe terminal commands:
 
 ```text
-pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, clear, help
+pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, clear, help
 ```
 
 Supported shell-like syntax is intentionally limited to one pipe plus `>` and
@@ -122,9 +131,18 @@ When changing direction:
 - Keep examples concrete.
 - Prefer progress that can be seen, run, or reviewed.
 
+Level 4 Git support:
+
+- `init`, `status`, `add`, `commit`, `log`, `diff`, `branch`, `switch`,
+  `checkout`, `merge`, `restore`, `remote`, `push`, `pull`, and mocked `clone`.
+- State is rebuilt from lesson files plus deterministic setup commands on reset.
+- No real Git process, GitHub connection, authentication, or network access.
+
 ## Unknowns To Resolve
 
 - What exact Supabase project and environment variables should be used?
 - Should MVP email auth require email confirmation?
-- Should Level 1 or auth be the next implementation task?
+- What exact Level 8 Codex teaser should follow auth and progress work?
+- Whether Level 5 or Supabase auth should follow the completed Level 4 course
+  slice if product sequencing changes.
 - What exact Supabase project and environment variables should be used?

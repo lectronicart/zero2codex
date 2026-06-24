@@ -1,324 +1,210 @@
 # Handoff
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
 ## Current State
 
-This repository now has the first zero2codex app scaffold plus playable Level 2 and Level 3 terminal-learning slices.
+zero2codex is a Vite + React + TypeScript course app with a 17-level,
+151-lesson course map and complete playable Levels 1 through 4.
 
-What exists now:
+Implemented:
 
-- A Git repository on branch `main`.
-- Local root commit `63b2984` exists: `Build Level 2 virtual terminal lessons`.
-- GitHub remote `origin` is configured as `https://github.com/lectronicart/zero2codex.git`.
-- Local `main` was merged and pushed to `origin/main` before the Level 3 implementation.
-- Pre-Level 3 local and remote HEAD: `f3d9158` (`Merge remote-tracking branch 'origin/main'`).
-- Remote initial commit `76cf894` was merged with the local project history. The README conflict was resolved by keeping the full local README and preserving the remote short description in the opening copy.
-- A `docs/` folder with project memory files.
-- `docs/ZERO2CODEX_BUILD_GUIDE.html`, a research-backed build guide for the full course/product.
-- A Vite + React + TypeScript app scaffold.
-- React Router route shell.
-- Tailwind CSS Vite integration plus custom CSS design tokens.
-- Public course map driven by `src/content/course.ts`.
-- Full 17-level, 151-lesson course outline with MVP/playable markers.
-- Playable route flow for all 13 Level 2 lessons and all 13 Level 3 lessons.
-- Browser-safe virtual terminal simulator with Level 2 file commands and Level 3 reading/writing/search/counting commands.
-- Local progress completion and resume state through `localStorage`.
-- Placeholder route shells for `/login` and `/register`.
-- No Supabase, email auth, Google OAuth, authenticated progress sync, achievements, real terminal execution, Git simulator, or Codex CLI simulator yet.
-- After the Level 3 commit, `git status --short` should still show `?? docs/lectronicart_project_operating_system_v1/`, an untracked folder intentionally not committed in the terminal-slice or memory commits.
+- Level 1: six foundational lessons plus the Find the Project challenge.
+- Level 2: 13 terminal navigation and file-management lessons.
+- Level 3: 13 file reading, writing, searching, piping, and counting lessons.
+- Level 4: 17 Git lessons plus the Full Git Workflow Challenge.
+- Zod-backed lesson schema and reusable lesson runner.
+- Browser-safe virtual filesystem and terminal.
+- Browser-safe Git simulator with staging, commits, history, diffs, branches,
+  switching, checkout, merges, guided conflicts, restore, mocked remotes,
+  push, pull, and clone.
+- Local lesson progress and resume state through `localStorage`.
+- Accessible keyboard controls, recovery feedback, responsive layouts, and
+  Playwright integration coverage.
+- Placeholder `/login` and `/register` routes.
 
-Project direction:
+Not implemented:
 
-- Build a free, gamified, beginner-friendly digital course inspired by `zero2claude.dev`.
-- Teach coding fundamentals plus OpenAI Codex workflows.
-- Keep the mechanics close in spirit to the reference course, but write original zero2codex content, branding, and implementation.
-- Use `docs/ZERO2CODEX_BUILD_GUIDE.html` as the main product blueprint.
-- Google OAuth is postponed; the next auth phase should start with Supabase email/password.
+- Level 5 and later playable lesson content.
+- Real shell, Git, GitHub, local-device, backend, or arbitrary code execution.
+- Supabase, accounts, email/password authentication, progress sync, protected
+  routes, achievements, Codex CLI simulation, or Google OAuth.
 
-Future coding sessions should inspect the guide and the existing app scaffold before changing architecture.
+## Live Preview
 
-Current viewable version:
+A Vite development server is currently running at:
 
-- No hosted/deployed URL exists yet.
-- Run locally with `npm run dev -- --host 127.0.0.1`.
-- Then open `http://127.0.0.1:5173/`.
-- Playable routes include `/lesson/2.1` through `/lesson/2.13` and `/lesson/3.1` through `/lesson/3.13`.
+```text
+http://127.0.0.1:4187/
+```
 
-## Files Added For Project Memory
+The app is open in a visible in-app browser tab. `AGENTS.md` now requires future
+sessions to keep a working preview open, reload it after frontend changes, and
+verify the affected workflow before handoff.
 
-- `docs/HANDOFF.md`: quick state transfer for the next human or AI session.
-- `docs/NEXT_STEPS.md`: practical backlog of what to do next.
-- `docs/DECISIONS.md`: decision log for project choices.
-- `docs/PROJECT_MEMORY.md`: durable overview of facts, conventions, and session guidance.
-- `docs/ZERO2CODEX_BUILD_GUIDE.html`: full build guide for the zero2codex course/app.
+If the process is no longer running, restart it with:
 
-## App Files Added
+```sh
+npm run dev -- --host 127.0.0.1 --port 4187
+```
 
-- `README.md`: setup, status, and MVP direction.
-- `AGENTS.md`: instructions for future Codex sessions.
-- `package.json` / `package-lock.json`: npm scripts and pinned dependencies.
-- `src/content/course.ts`: typed source of truth for the 17-level course map.
-- `src/content/lessonSchema.ts`: Zod-backed schema for playable lesson content.
-- `src/content/level2Lessons.ts`: complete Level 2 playable lessons.
-- `src/content/level3Lessons.ts`: complete Level 3 playable lessons.
+Binding localhost may require elevated sandbox permission.
+
+## Architecture
+
+Important files:
+
+- `src/content/course.ts`: static 17-level course map.
 - `src/content/lessons.ts`: playable lesson registry.
-- `src/terminal/`: virtual file system, path resolver, parser, command handlers, session state, and terminalStep validation.
-- `src/progress/progressStore.ts`: localStorage progress store.
-- `src/App.tsx`: route shell.
-- `src/pages/`: current public map and placeholder pages.
-- `src/components/`: app shell, level card, terminal preview, lesson runner, and terminal UI components.
-- `src/styles.css`: Tailwind import plus zero2codex design tokens/styles.
+- `src/content/lessonSchema.ts`: Zod-backed lesson and interaction schema.
+- `src/content/level1Lessons.ts`: Level 1 content.
+- `src/content/level2Lessons.ts`: Level 2 content.
+- `src/content/level3Lessons.ts`: Level 3 content.
+- `src/content/level4Lessons.ts`: Level 4 content.
+- `src/foundations/levelOneValidation.ts`: Level 1 interaction rules.
+- `src/terminal/`: virtual filesystem, parser, commands, session state, and
+  terminal-step validation.
+- `src/git/`: Git domain state, command behavior, snapshots, diffs, branches,
+  mocked remotes, and Git lesson validation.
+- `src/components/LessonRunner.tsx`: section-based lesson rendering.
+- `src/components/TerminalPanel.tsx`: terminal UI and Git state strip.
+- `src/progress/progressStore.ts`: local progress persistence.
+- `docs/LEVEL1_IMPLEMENTATION_HANDOFF.md`: Level 1 implementation details.
+- `docs/LEVEL4_GIT_IMPLEMENTATION_HANDOFF.md`: Git/Level 4 implementation
+  details and intentional limitations.
 
-## Terminal Architecture
+The virtual filesystem is the Git working-directory source of truth. Git stores
+a separate staging snapshot, immutable commit snapshots, branch pointers,
+remotes, and conflict state. Every lesson reset rebuilds its original state
+from the initial filesystem plus deterministic `setupCommands`.
 
-- The terminal is a browser simulation only. It never calls a real shell, backend, iframe terminal, WebContainer, or local computer API.
-- `src/terminal/vfs.ts` stores folders/files in memory and clones state on file-system changes.
-- `src/terminal/path.ts` resolves relative paths, absolute paths, `..`, and `~` while clamping traversal inside the virtual root.
-- `src/terminal/parser.ts` tokenizes commands, quoted strings, one pipe, and basic overwrite/append redirects.
-- `src/terminal/commands.ts` handles supported commands, command output flow, redirects, one-stage pipes, and beginner-friendly errors.
-- `src/terminal/state.ts` manages command history, terminal output entries, and the latest command output for validation.
-- `src/terminal/validation.ts` validates terminalStep command history, current directory, expected paths, missing paths, file contents, and latest output.
-- `src/components/TerminalPanel.tsx` renders the terminal log, prompt path, reset control, command input, and up/down history navigation.
+## Files Changed This Session
 
-## Supported Commands
+Current tracked modifications:
 
-- `pwd`
-- `ls`
-- `cd`
-- `mkdir`
-- `touch`
-- `rm`
-- `cp`
-- `mv`
-- `cat`
-- `head`
-- `tail`
-- `echo`
-- `grep`
-- `rg`
-- `wc`
-- `clear`
-- `help`
-
-Supported syntax:
-
-- One pipe with `|`, for example `cat notes.txt | grep "Codex"`.
-- Overwrite redirect with `>`, for example `echo "hello" > notes.txt`.
-- Append redirect with `>>`, for example `echo "again" >> notes.txt`.
-
-Unsupported by design in this phase: real shell execution, Git, Codex CLI, curl, backend calls, arbitrary code execution, host file access, full POSIX shell parsing, multi-stage pipes, advanced regular-expression syntax, and advanced command flags beyond the lessons.
-
-## Lesson Section Schema
-
-Playable lessons are validated in `src/content/lessonSchema.ts` with Zod. Current section types:
-
-- `narrative`
-- `quiz`
-- `fillInBlank`
-- `checklist`
-- `promptTemplate`
-- `terminalStep`
-
-`terminalStep` supports lesson-specific initial file systems, starting directory, expected command strings or regex patterns, expected current directory, expected files/folders, absent paths, expected latest command output, success message, hint, failure feedback, and reset behavior through the terminal UI.
-
-## Test Coverage
-
-- `tests/path.test.mjs`: path normalization, relative/absolute/home/parent resolution, root escape clamping, parent/basename helpers.
-- `tests/commands.test.mjs`: every supported command plus invalid paths, unsupported commands, redirects, recursive search, pipes, folder deletion guard, and root isolation.
-- `tests/parser.test.mjs`: quoted strings, pipes, overwrite redirects, append redirects, and invalid/unsupported syntax.
-- `tests/terminal-step.test.mjs`: terminalStep command/current-directory/file-system/latest-output validation.
-- `tests/lesson-flow.test.mjs`: every Level 2 and Level 3 lesson has a terminalStep, all Level 2 and Level 3 terminal steps can be completed with intended commands, and file-writing/search/log-investigation flows pass end-to-end.
-- `tests/progress.test.mjs`: localStorage-compatible save/load, lesson restart resume reset, and terminal reset from the original lesson file system.
-
-## Files Changed In The Latest Implementation Session
-
-Level 3 implementation session:
-
-- `README.md`
 - `AGENTS.md`
+- `README.md`
+- `docs/DECISIONS.md`
 - `docs/HANDOFF.md`
 - `docs/NEXT_STEPS.md`
-- `docs/DECISIONS.md`
 - `docs/PROJECT_MEMORY.md`
-- `src/content/course.ts`
-- `src/content/lessonSchema.ts`
-- `src/content/lessons.ts`
-- `src/content/level3Lessons.ts`
-- `src/terminal/types.ts`
-- `src/terminal/parser.ts`
-- `src/terminal/vfs.ts`
-- `src/terminal/commands.ts`
-- `src/terminal/state.ts`
-- `src/terminal/validation.ts`
-- `src/components/TerminalPreview.tsx`
-- `src/pages/CourseMapPage.tsx`
-- `src/pages/LessonShellPage.tsx`
-- `scripts/validate-content.ts`
-- `tests/parser.test.mjs`
-- `tests/commands.test.mjs`
-- `tests/terminal-step.test.mjs`
-- `tests/lesson-flow.test.mjs`
-
-App/config files in commit `63b2984`:
-
-- `.gitignore`
-- `AGENTS.md`
-- `README.md`
-- `eslint.config.js`
-- `index.html`
 - `package.json`
-- `package-lock.json`
-- `tsconfig.json`
-- `tsconfig.app.json`
-- `tsconfig.node.json`
-- `vite.config.ts`
-- `src/main.tsx`
-- `src/App.tsx`
-- `src/styles.css`
-- `src/vite-env.d.ts`
-- `src/content/course.ts`
-- `src/components/AppShell.tsx`
-- `src/components/LevelCard.tsx`
-- `src/components/TerminalPreview.tsx`
-- `src/pages/CourseMapPage.tsx`
-- `src/pages/LessonShellPage.tsx`
-- `src/content/lessonSchema.ts`
-- `src/content/level2Lessons.ts`
-- `src/content/lessons.ts`
-- `src/terminal/types.ts`
-- `src/terminal/path.ts`
-- `src/terminal/vfs.ts`
-- `src/terminal/parser.ts`
-- `src/terminal/commands.ts`
-- `src/terminal/state.ts`
-- `src/terminal/validation.ts`
-- `src/progress/progressStore.ts`
+- `scripts/validate-content.ts`
 - `src/components/LessonRunner.tsx`
 - `src/components/TerminalPanel.tsx`
-- `scripts/validate-content.ts`
-- `tests/path.test.mjs`
-- `tests/commands.test.mjs`
-- `tests/terminal-step.test.mjs`
+- `src/content/course.ts`
+- `src/content/lessonSchema.ts`
+- `src/content/lessons.ts`
+- `src/pages/LessonShellPage.tsx`
+- `src/styles.css`
+- `src/terminal/commands.ts`
+- `src/terminal/state.ts`
+- `src/terminal/types.ts`
+- `src/terminal/validation.ts`
 - `tests/lesson-flow.test.mjs`
-- `src/pages/NotFoundPage.tsx`
-- `src/pages/SetupShellPage.tsx`
+- `tests/progress.test.mjs`
+- `tests/terminal-step.test.mjs`
 
-Memory/docs updated:
+Current untracked additions:
 
-- `docs/HANDOFF.md`
-- `docs/NEXT_STEPS.md`
-- `docs/DECISIONS.md`
-- `docs/PROJECT_MEMORY.md`
+- `docs/LEVEL1_IMPLEMENTATION_HANDOFF.md`
+- `docs/LEVEL4_GIT_IMPLEMENTATION_HANDOFF.md`
+- `docs/lectronicart_project_operating_system_v1/`
+- `playwright.config.mjs`
+- `src/content/level1Lessons.ts`
+- `src/content/level4Lessons.ts`
+- `src/foundations/`
+- `src/git/`
+- `tests/e2e/`
+- `tests/git-simulator.test.mjs`
+- `tests/level-one-validation.test.mjs`
 
-Post-terminal memory and GitHub update in this session:
+Do not discard or overwrite these changes. They contain the complete Level 1
+and Level 4 implementations.
 
-- `docs/HANDOFF.md`
-- `docs/NEXT_STEPS.md`
-- `docs/DECISIONS.md`
-- Merge commit `f3d9158` pushed local `main` to GitHub after resolving the remote README-only initial commit.
+Outside the repository, the `jack-html-generator` skill was installed at:
 
-## What A Future AI Session Should Do First
+```text
+~/.codex/skills/jack-html-generator
+```
 
-1. Read all files in `docs/`.
-2. Run `rg --files --hidden -g '!.git'` to see the current repo shape.
-3. Check `git status --short` before editing.
-4. Open or read `docs/ZERO2CODEX_BUILD_GUIDE.html` before scaffolding code.
-5. If source files have been added since this handoff, inspect them before suggesting changes.
-6. Update these memory files when meaningful project facts change.
+Codex must be restarted before that new skill appears in a fresh skill list.
 
-## Verification Notes
+## Verification
 
-Current verification commands:
+The latest complete verification passed:
 
 ```sh
 npm run typecheck
 npm run lint
 npm run test
+npm run test:integration
 npm run validate:content
 npm run build
 ```
 
-All five passed after the Level 3 slice was added.
+Results:
 
-Additional checks performed:
+- 74 unit tests passed.
+- 14 Playwright tests passed.
+- Content validation found 17 levels, 151 map lessons, 6 Level 1 lessons,
+  13 Level 2 lessons, 13 Level 3 lessons, and 17 Level 4 lessons.
+- Production build succeeded.
+- In-app browser QA passed for desktop branch/merge and mobile Git lesson
+  layouts with no relevant console warnings or errors.
+- Mobile browser QA found no horizontal page overflow.
 
-- Verified `src/content/course.ts` exports 17 levels and 151 lessons.
-- Verified `src/content/level2Lessons.ts` exports 13 playable Level 2 lessons, each with at least one `terminalStep`.
-- Verified `src/content/level3Lessons.ts` exports 13 playable Level 3 lessons, each with at least one `terminalStep`.
-- Verified all Level 2 and Level 3 terminal steps can be completed with intended commands in automated tests.
-- Verified parser tests cover quoted strings, one pipe, overwrite redirects, append redirects, and unsupported syntax.
-- Verified command tests cover `head`, `tail`, `grep`, `rg`, `wc`, redirects, pipes, recursive search, and virtual root isolation.
-- Started the Vite dev server at `http://127.0.0.1:5173/`.
-- Verified desktop `/` in the in-app browser: title `zero2codex`, nonblank content, no framework overlay, no console warnings/errors, and updated 26-playable-lessons status visible.
-- Verified mobile `/lesson/3.1` in the in-app browser at 390x844: learner can advance to the terminal, run `cat notes.txt`, see file output and success feedback, and unlock Continue.
-- Saved inspection screenshots at `/private/tmp/zero2codex-level3-home.png` and `/private/tmp/zero2codex-level3-lesson-mobile-success.png`.
+The production build emits a non-blocking warning because the main JavaScript
+chunk is approximately 517 kB after minification.
 
-The dev server can be started with:
+## Errors And Friction
 
-```sh
-npm run dev -- --host 127.0.0.1
-```
-
-In this sandbox, binding the dev server required elevated permissions.
-
-## Errors Or Friction Encountered
-
-Level 3 session:
-
-- Starting Vite still required elevated permissions in this sandbox.
-- In-app browser QA was available in this session and was used for desktop `/` and mobile `/lesson/3.1`.
-- Browser `waitForLoadState` in this runtime did not support `networkidle`; reran the check with supported `load` state.
-- Pressing Enter in the terminal input through the browser API did not submit the command during mobile QA; clicking the visible Run button did submit and verified the successful learner flow.
-
-Earlier terminal/GitHub sessions:
-
-- Starting Vite still requires elevated permissions in this sandbox.
-- The in-app browser tool was not exposed. Browser QA used Playwright with the repo's dev dependency.
-- Playwright's browser binary had to be installed before browser smoke tests could run.
-- First GitHub push attempt failed because `origin/main` already contained an initial README commit that local `main` did not have.
-- `git fetch origin main` succeeded and showed remote commit `76cf894`.
-- The first attempted merge was blocked by a temporary Codex usage-limit approval issue, but a later merge succeeded.
-- The README add/add conflict was resolved manually.
-- `git push -u origin main` succeeded, and local `main` now tracks `origin/main`.
-- `gh` is not installed, so PR creation through GitHub CLI is not available from this environment.
-
-## Known Limitations
-
-- Level 2 and Level 3 are playable. Level 1 and Level 8 are still planned placeholders despite MVP markers.
-- Terminal state is in memory and resets on lesson restart or terminal reset; progress is what persists.
-- The terminal intentionally supports only one pipe and basic `>` / `>>` redirects.
-- `grep` is simple text matching with optional `-r`; `rg` is a beginner-friendly recursive search simulation.
-- The terminal still does not support curl, Git, Codex CLI commands, or real shell execution.
-- `rm -r` is supported as an explicit folder delete, but this is still a simplified teaching simulator.
-- Progress is local only. It does not sync across browsers or accounts yet.
+- Local Vite and Playwright web servers initially failed with `listen EPERM`
+  inside the sandbox. Rerunning with elevated permission succeeded.
+- Production build found two type issues not exposed by the faster standalone
+  typecheck: Git command-result narrowing and `flatMap` inference. Both were
+  fixed, and the build now passes.
+- The in-app browser screenshot API is `tab.screenshot(...)`, not
+  `tab.playwright.screenshot(...)`.
+- Playwright creates `test-results/`; it was removed after verification.
+- The Git simulator intentionally stops divergent pulls and merge conflicts
+  instead of pretending to support production-grade resolution.
 
 ## Unfinished Work
 
-- `docs/lectronicart_project_operating_system_v1/` is untracked and has not been inspected or committed.
-- No Supabase setup or environment variables yet.
-- No email/password account creation yet.
-- No synced progress store yet.
-- No protected routes yet.
-- No Level 1 playable lesson content yet.
-- No Google OAuth; it is intentionally postponed.
+- Review, stage, and commit the current Level 1/Level 4 implementation and
+  documentation changes.
+- Decide whether the untracked Project Operating System directory belongs in
+  the repository commit.
+- Implement Level 5, "How Software Actually Works."
+- Decide when to prioritize Supabase email/password auth and synced progress.
+- Create a hosted preview if the app needs a URL outside the local Codex
+  environment.
+- Later: achievements, Codex teaser lessons, and advanced course levels.
 
 ## Next Exact Action
 
-Decide what to do with the untracked `docs/lectronicart_project_operating_system_v1/` folder.
+Before starting another feature:
 
-After that, the next product task is to write the complete playable Level 1 lesson set using the existing lesson schema and lesson runner.
+1. Run `git diff --check` and review `git status --short`.
+2. Review the complete Level 1 and Level 4 diff.
+3. Decide whether to include
+   `docs/lectronicart_project_operating_system_v1/`.
+4. Stage and commit the approved current implementation.
 
-Recommended next Goal Mode task:
+After preserving the current work, the next Goal Mode task is to implement all
+14 Level 5 lessons with browser-safe conceptual interactions for code,
+websites, client/server, HTTP, APIs, JSON, databases, frontend/backend, cloud,
+deployment, DNS, and domains.
 
-- Create all six Level 1 lessons.
-- Keep every lesson beginner-friendly and original.
-- Include at least one active interaction in every lesson.
-- Reuse the current local progress flow.
-- Run `npm run typecheck`, `npm run lint`, `npm run test`, `npm run validate:content`, and `npm run build`.
+## Restart Checklist
 
-## Open Questions
-
-- What exact Supabase project should be used for email auth?
-- Should email confirmation be disabled for local/MVP previews?
-- What should the first lesson schema validator enforce?
+1. Read `README.md`, `AGENTS.md`, this file, `docs/DECISIONS.md`, and
+   `docs/NEXT_STEPS.md`.
+2. Run `rg --files --hidden -g '!.git'`.
+3. Run `git status --short`; expect a dirty worktree until the current
+   implementation is committed.
+4. Confirm `http://127.0.0.1:4187/` is running and visible in the in-app
+   browser, or restart it.
+5. Read `docs/LEVEL4_GIT_IMPLEMENTATION_HANDOFF.md` before changing Git or
+   terminal architecture.

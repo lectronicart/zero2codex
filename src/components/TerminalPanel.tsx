@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   createTerminalSession,
   getHistoryCommand,
@@ -6,6 +6,7 @@ import {
   type TerminalSessionConfig,
 } from "../terminal/state";
 import type { TerminalSessionState } from "../terminal/types.ts";
+import { getGitWorkspaceSummary } from "../git/simulator.ts";
 
 type TerminalPanelProps = {
   config: TerminalSessionConfig;
@@ -17,6 +18,15 @@ export function TerminalPanel({ config, onChange }: TerminalPanelProps) {
   const [input, setInput] = useState("");
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const logRef = useRef<HTMLDivElement | null>(null);
+  const gitSummary = useMemo(
+    () =>
+      getGitWorkspaceSummary(
+        session.fileSystem,
+        session.currentDirectory,
+        session.gitState,
+      ),
+    [session.currentDirectory, session.fileSystem, session.gitState],
+  );
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
@@ -49,6 +59,30 @@ export function TerminalPanel({ config, onChange }: TerminalPanelProps) {
           Reset
         </button>
       </div>
+      {gitSummary ? (
+        <div className="git-state-strip" aria-label="Simulated Git state">
+          <span>
+            Branch <strong>{gitSummary.branch}</strong>
+          </span>
+          <span>
+            Staged <strong>{gitSummary.stagedCount}</strong>
+          </span>
+          <span>
+            Working <strong>{gitSummary.unstagedCount + gitSummary.untrackedCount}</strong>
+          </span>
+          <span>
+            Commits <strong>{gitSummary.commitCount}</strong>
+          </span>
+          <span>
+            Remotes <strong>{gitSummary.remoteCount}</strong>
+          </span>
+          {gitSummary.conflictCount > 0 ? (
+            <span className="git-state-warning">
+              Conflicts <strong>{gitSummary.conflictCount}</strong>
+            </span>
+          ) : null}
+        </div>
+      ) : null}
       <div
         className="terminal-log"
         ref={logRef}

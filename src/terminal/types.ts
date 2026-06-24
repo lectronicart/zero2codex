@@ -69,8 +69,10 @@ export type TerminalOutputEntry = {
 
 export type TerminalSessionState = {
   fileSystem: VirtualFileSystem;
+  gitState: GitState;
   currentDirectory: string;
   history: string[];
   entries: TerminalOutputEntry[];
   lastOutput: string[];
 };
+import type { GitState } from "../git/types.ts";

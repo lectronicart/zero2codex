@@ -1,6 +1,8 @@
 import { resolvePath } from "./path.ts";
 import { executeCommand } from "./commands.ts";
+import { parseCommand } from "./parser.ts";
 import { createFileSystem } from "./vfs.ts";
+import { createGitState, executeGitCommand } from "../git/simulator.ts";
 import type {
   FileTreeInput,
   TerminalOutputEntry,
@@ -13,12 +15,14 @@ export type TerminalSessionConfig = {
   initialFileSystem?: Record<string, FileTreeInput>;
   startingDirectory?: string;
   welcomeMessage?: string;
+  setupCommands?: string[];
 };
 
 export function createTerminalSession({
   initialFileSystem = {},
   startingDirectory = "/home/codex",
   welcomeMessage = "Safe terminal ready. Type help if you get stuck.",
+  setupCommands = [],
 }: TerminalSessionConfig = {}): TerminalSessionState {
   const fileSystem = createFileSystem(initialFileSystem);
   const currentDirectory = resolvePath(
@@ -27,9 +31,25 @@ export function createTerminalSession({
     fileSystem.homeDirectory,
   );
 
-  return {
+  let session: TerminalSessionState = {
     fileSystem,
+    gitState: createGitState(),
     currentDirectory,
+    history: [],
+    entries: [entry("system", welcomeMessage)],
+    lastOutput: [],
+  };
+
+  for (const command of setupCommands) {
+    session = runTerminalCommand(session, command);
+    const lastEntry = session.entries.at(-1);
+    if (lastEntry?.kind === "error") {
+      throw new Error(`Terminal setup failed for "${command}": ${lastEntry.text}`);
+    }
+  }
+
+  return {
+    ...session,
     history: [],
     entries: [entry("system", welcomeMessage)],
     lastOutput: [],
@@ -45,7 +65,27 @@ export function runTerminalCommand(
     return state;
   }
 
-  const result = executeCommand(state.fileSystem, state.currentDirectory, trimmed);
+  const parsed = parseCommand(trimmed);
+  const gitResult =
+    parsed.ok && parsed.command === "git"
+      ? parsed.pipe || parsed.redirect
+        ? {
+            fileSystem: state.fileSystem,
+            gitState: state.gitState,
+            output: [],
+            error:
+              "Git commands cannot use pipes or redirects in this Level 4 simulator.",
+          }
+        : executeGitCommand(
+            state.fileSystem,
+            state.currentDirectory,
+            state.gitState,
+            parsed.args,
+          )
+      : null;
+  const result =
+    gitResult ??
+    executeCommand(state.fileSystem, state.currentDirectory, trimmed);
   const inputEntry = entry("input", trimmed, state.currentDirectory);
   const outputEntries = result.error
     ? [entry("error", result.error)]
@@ -53,9 +93,16 @@ export function runTerminalCommand(
 
   return {
     fileSystem: result.fileSystem,
-    currentDirectory: result.currentDirectory,
+    gitState: gitResult?.gitState ?? state.gitState,
+    currentDirectory:
+      "currentDirectory" in result
+        ? result.currentDirectory
+        : state.currentDirectory,
     history: [...state.history, trimmed],
-    entries: result.clear ? [] : [...state.entries, inputEntry, ...outputEntries],
+    entries:
+      "clear" in result && result.clear
+        ? []
+        : [...state.entries, inputEntry, ...outputEntries],
     lastOutput: result.error ? [] : result.output,
   };
 }

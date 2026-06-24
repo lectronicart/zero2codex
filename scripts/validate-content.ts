@@ -13,8 +13,10 @@ const errors: string[] = [];
 const allCourseLessons = courseLevels.flatMap((level) => level.lessons);
 const lessonIds = allCourseLessons.map((lesson) => lesson.id);
 const uniqueLessonIds = new Set(lessonIds);
+const level1Lessons = playableLessons.filter((lesson) => lesson.levelId === 1);
 const level2Lessons = playableLessons.filter((lesson) => lesson.levelId === 2);
 const level3Lessons = playableLessons.filter((lesson) => lesson.levelId === 3);
+const level4Lessons = playableLessons.filter((lesson) => lesson.levelId === 4);
 
 if (courseStats.totalLevels !== 17) {
   errors.push(`Expected 17 levels, found ${courseStats.totalLevels}.`);
@@ -38,8 +40,31 @@ if (level2Lessons.length !== 13) {
   errors.push(`Expected 13 playable Level 2 lessons, found ${level2Lessons.length}.`);
 }
 
+if (level1Lessons.length !== 6) {
+  errors.push(`Expected 6 playable Level 1 lessons, found ${level1Lessons.length}.`);
+}
+
 if (level3Lessons.length !== 13) {
   errors.push(`Expected 13 playable Level 3 lessons, found ${level3Lessons.length}.`);
+}
+
+if (level4Lessons.length !== 17) {
+  errors.push(`Expected 17 playable Level 4 lessons, found ${level4Lessons.length}.`);
+}
+
+for (const lesson of level1Lessons) {
+  const interactions = lesson.sections.filter(
+    (section) => section.type === "foundationInteraction",
+  );
+
+  if (interactions.length === 0) {
+    errors.push(`${lesson.id} has no foundationInteraction section.`);
+  }
+
+  const quickChecks = lesson.sections.filter((section) => section.type === "quiz");
+  if (quickChecks.length === 0) {
+    errors.push(`${lesson.id} has no quick-check quiz.`);
+  }
 }
 
 for (const lesson of [...level2Lessons, ...level3Lessons]) {
@@ -52,6 +77,15 @@ for (const lesson of [...level2Lessons, ...level3Lessons]) {
   }
 }
 
+for (const lesson of level4Lessons) {
+  const activeSections = lesson.sections.filter(
+    (section) => section.type !== "narrative",
+  );
+  if (activeSections.length === 0) {
+    errors.push(`${lesson.id} has no active interaction.`);
+  }
+}
+
 if (errors.length > 0) {
   for (const error of errors) {
     console.error(error);
@@ -59,6 +93,6 @@ if (errors.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Content OK: ${courseStats.totalLevels} levels, ${courseStats.totalLessons} map lessons, ${level2Lessons.length} Level 2 lessons, ${level3Lessons.length} Level 3 lessons.`,
+    `Content OK: ${courseStats.totalLevels} levels, ${courseStats.totalLessons} map lessons, ${level1Lessons.length} Level 1 lessons, ${level2Lessons.length} Level 2 lessons, ${level3Lessons.length} Level 3 lessons, ${level4Lessons.length} Level 4 lessons.`,
   );
 }

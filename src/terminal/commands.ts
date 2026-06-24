@@ -20,7 +20,7 @@ import type {
 } from "./types.ts";
 
 const helpText = [
-  "Supported commands: pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, clear, help.",
+  "Supported commands: pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, clear, help.",
   "Supported syntax: one pipe with |, overwrite with >, append with >>.",
   "Paths can be relative, absolute with /, parent folders with .., or home with ~.",
   "This is a browser-safe simulator. It never runs commands on your computer.",

@@ -1,6 +1,10 @@
 import { resolvePath } from "./path.ts";
 import { getNode } from "./vfs.ts";
 import type { TerminalSessionState } from "./types.ts";
+import {
+  validateGitExpectation,
+  type GitExpectation,
+} from "../git/validation.ts";
 
 export type CommandExpectation =
   | string
@@ -29,6 +33,7 @@ export type TerminalStepValidationInput = {
   expectedCurrentDirectory?: string;
   expectedFileSystem?: FileSystemExpectation;
   expectedOutput?: OutputExpectation;
+  expectedGit?: GitExpectation;
   successMessage: string;
   failureFeedback: string;
 };
@@ -71,6 +76,11 @@ export function validateTerminalStep(
   const outputResult = validateOutput(step.expectedOutput, state);
   if (!outputResult.ok) {
     return { ok: false, message: outputResult.message || step.failureFeedback };
+  }
+
+  const gitResult = validateGitExpectation(step.expectedGit, state);
+  if (!gitResult.ok) {
+    return { ok: false, message: gitResult.message || step.failureFeedback };
   }
 
   return { ok: true, message: step.successMessage };

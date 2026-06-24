@@ -1,10 +1,64 @@
 # Decisions
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
 This file records durable project decisions so future sessions can understand why the repo is shaped the way it is.
 
 ## Decision Log
+
+### 2026-06-24: Keep a visible live preview during implementation
+
+Decision: Keep the local Vite app running at `http://127.0.0.1:4187/` in a
+visible in-app browser tab while implementing changes.
+
+Why: The project owner wants every change to remain immediately testable
+inside the Codex project, and rendered verification catches interaction and
+layout issues that static checks do not.
+
+Impact:
+
+- `AGENTS.md` contains the permanent live-preview workflow.
+- Future frontend sessions should reload the existing tab after changes and
+  verify the affected workflow, console health, and responsive behavior.
+- Do not close the tab or stop the development server unless requested or a
+  restart is required.
+
+### 2026-06-24: Build the browser-safe Git course before authentication
+
+Decision: Implement Level 4 with a reusable in-memory Git simulator before
+Supabase authentication.
+
+Why: The explicit Goal Mode objective continued the completed Level 1 through
+Level 3 course sequence. The build guide also places the Git simulator inside
+the virtual-terminal phase before Git lessons.
+
+Impact:
+
+- `src/git/` owns Git domain logic separately from React and terminal
+  presentation.
+- The virtual filesystem remains the working-directory source of truth.
+- Git commits use deterministic immutable snapshots and hashes.
+- Lesson reset rebuilds Git state from the original virtual filesystem and
+  safe setup commands.
+- GitHub, authentication, real Git execution, and network access remain out of
+  scope.
+
+### 2026-06-23: Use one reusable foundational interaction section for Level 1
+
+Decision: Extend the lesson schema with a typed `foundationInteraction` section
+for classification, choices, path building, path classification, matching,
+sequencing, and the Level 1 review challenge.
+
+Why: The existing quiz and terminal sections could not express the requested
+file, folder, path, file-type, program, and terminal simulations cleanly.
+
+Impact:
+
+- Level 1 content lives in `src/content/level1Lessons.ts`.
+- Validation remains framework-free in
+  `src/foundations/levelOneValidation.ts`.
+- No real filesystem, terminal, device, account, or backend access was added.
+- Future foundational lessons can reuse the same accessible controls.
 
 ### 2026-06-23: Merge and push main to GitHub
 
@@ -27,7 +81,10 @@ Why: No Vercel, Netlify, GitHub Pages, or other static deployment has been confi
 
 Impact:
 
-- Use `npm run dev -- --host 127.0.0.1` and open `http://127.0.0.1:5173/` to view the app locally.
+- This remains a local-only preview decision.
+- The active preview convention was superseded on 2026-06-24: use
+  `npm run dev -- --host 127.0.0.1 --port 4187` and open
+  `http://127.0.0.1:4187/`.
 - A future hosted preview should be recorded in `README.md` and `docs/HANDOFF.md`.
 
 ### 2026-06-23: Build the Level 2 terminal slice before auth
@@ -157,10 +214,10 @@ Impact:
 ## Pending Decisions
 
 - Supabase project and environment setup.
-- Whether Level 1 content or auth comes next.
 - Progress sync data model.
 - Whether local/MVP email auth disables email confirmation.
-- Whether the first playable slice should start with Level 1 lessons before auth or after auth.
+- Whether Supabase email auth or the Level 8 Codex teaser comes next.
+- Whether the next curriculum slice is Level 5 or an MVP account/sync phase.
 
 ## How To Add A Decision
 

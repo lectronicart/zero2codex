@@ -21,7 +21,7 @@ export function LessonShellPage() {
   }
 
   if (playableLesson) {
-    return <LessonRunner lesson={playableLesson} />;
+    return <LessonRunner key={playableLesson.id} lesson={playableLesson} />;
   }
 
   return (
@@ -34,8 +34,8 @@ export function LessonShellPage() {
       <div className="route-shell-panel">
         <h2>Planned lesson</h2>
         <p>
-          This lesson is still in the content backlog. Levels 2 and 3 are the
-          current playable terminal-learning slices.
+          This lesson is still in the content backlog. Levels 1 through 4 are
+          the current playable learning path.
         </p>
       </div>
       <Link className="button button-secondary" to="/">

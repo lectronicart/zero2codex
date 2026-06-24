@@ -20,8 +20,7 @@ git status --short
 
 ## Current Implementation Boundary
 
-The current app includes the scaffold plus the playable Level 2 and Level 3
-terminal slices:
+The current app includes the scaffold plus playable Levels 1 through 4:
 
 - Route shell.
 - Design tokens.
@@ -29,17 +28,19 @@ terminal slices:
 - Zod-backed playable lesson schema.
 - Complete Level 2 terminal-learning lessons.
 - Complete Level 3 reading-and-writing-files lessons.
+- Complete Level 4 Git lessons.
 - Browser-safe virtual terminal simulator.
+- Browser-safe Git simulator layered on the virtual file system.
 - Local progress persistence through `localStorage`.
 - Placeholder login/register routes and planned-lesson fallback routes.
 
 Do not assume Supabase, email auth, Google OAuth, authenticated progress sync,
-achievements, real shell execution, Git simulation, Codex CLI simulation, or
-backend APIs exist until files for those systems are added.
+achievements, real shell execution, Codex CLI simulation, or backend APIs exist
+until files for those systems are added.
 
 The virtual terminal currently supports `pwd`, `ls`, `cd`, `mkdir`, `touch`,
 `rm`, `cp`, `mv`, `cat`, `head`, `tail`, `echo`, `grep`, `rg`, `wc`, `clear`,
-and `help`, plus one pipe and basic `>` / `>>` redirects.
+`git`, and `help`, plus one pipe and basic `>` / `>>` redirects.
 
 ## Product Rules
 
@@ -59,13 +60,22 @@ and `help`, plus one pipe and basic `>` / `>>` redirects.
 - Run `npm run typecheck`, `npm run lint`, and `npm run build` before handoff
   when dependencies are installed.
 
+## Live Preview Rule
+
+- Keep a working development build open in a visible in-app browser tab while
+  implementing changes.
+- Use `http://127.0.0.1:4187/` unless that port is unavailable.
+- After frontend changes, reload the live tab and verify the affected workflow,
+  console health, and responsive layout before handoff.
+- Do not close the live preview tab or stop its development server unless the
+  user asks or the server must be restarted.
+
 ## Near-Term Roadmap
 
-1. Add Level 1 playable lessons.
+1. Implement Level 5 "How Software Actually Works."
 2. Add Supabase email/password auth.
 3. Add authenticated progress sync.
 4. Add the first Codex teaser lessons.
 5. Add starter achievements.
-6. Add Git simulation for Level 4 when needed.
 
 Google OAuth remains postponed.
