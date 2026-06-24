@@ -62,7 +62,17 @@ export type ParsedCommand =
 
 export type TerminalOutputEntry = {
   id: string;
-  kind: "input" | "output" | "error" | "system" | "success";
+  kind:
+    | "input"
+    | "output"
+    | "error"
+    | "system"
+    | "success"
+    | "http-status"
+    | "http-header"
+    | "http-body"
+    | "http-error-status"
+    | "http-error-body";
   text: string;
   prompt?: string;
 };
@@ -70,9 +80,11 @@ export type TerminalOutputEntry = {
 export type TerminalSessionState = {
   fileSystem: VirtualFileSystem;
   gitState: GitState;
+  httpState: MockHttpState;
   currentDirectory: string;
   history: string[];
   entries: TerminalOutputEntry[];
   lastOutput: string[];
 };
 import type { GitState } from "../git/types.ts";
+import type { MockHttpState } from "../http/types.ts";

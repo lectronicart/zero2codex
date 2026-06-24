@@ -6,6 +6,26 @@ This file records durable project decisions so future sessions can understand wh
 
 ## Decision Log
 
+### 2026-06-24: Teach HTTP through an offline allowlisted mock universe
+
+Decision: Add a pure TypeScript mock HTTP layer and a deliberately limited
+`curl` command for Level 6. Only lesson-enabled fictional `.test` hosts can be
+routed, and no browser network API is used.
+
+Why: Learners need realistic request, response, status, header, JSON, auth, and
+debugging practice without real credentials, external services, or accidental
+network access.
+
+Impact:
+
+- `src/http/` owns HTTP parsing, endpoint definitions, routing, state, output,
+  and validation separately from React and terminal presentation.
+- Request history is resettable and scoped to each terminal lesson.
+- Level 6 uses only `DEMO_TOKEN`, `sk-demo-not-real`, and
+  `ghp_demo_not_real`.
+- Live GitHub/OpenAI calls, arbitrary URLs, cookies, uploads, OAuth, backend
+  APIs, and full curl/HTTP compatibility remain out of scope.
+
 ### 2026-06-24: Teach Level 5 through one focused conceptual interaction union
 
 Decision: Add a `conceptInteraction` lesson section with assignment, sequence,
@@ -236,7 +256,7 @@ Impact:
 - Progress sync data model.
 - Whether local/MVP email auth disables email confirmation.
 - Whether Supabase email auth or the Level 8 Codex teaser comes next.
-- Whether the next curriculum slice is Level 5 or an MVP account/sync phase.
+- Whether the next curriculum slice is Level 7 or an MVP account/sync phase.
 
 ## How To Add A Decision
 

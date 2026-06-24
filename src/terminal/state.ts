@@ -3,6 +3,7 @@ import { executeCommand } from "./commands.ts";
 import { parseCommand } from "./parser.ts";
 import { createFileSystem } from "./vfs.ts";
 import { createGitState, executeGitCommand } from "../git/simulator.ts";
+import { createHttpState, executeCurlCommand } from "../http/state.ts";
 import type {
   FileTreeInput,
   TerminalOutputEntry,
@@ -16,6 +17,7 @@ export type TerminalSessionConfig = {
   startingDirectory?: string;
   welcomeMessage?: string;
   setupCommands?: string[];
+  mockHttpEndpointIds?: string[];
 };
 
 export function createTerminalSession({
@@ -23,6 +25,7 @@ export function createTerminalSession({
   startingDirectory = "/home/codex",
   welcomeMessage = "Safe terminal ready. Type help if you get stuck.",
   setupCommands = [],
+  mockHttpEndpointIds = [],
 }: TerminalSessionConfig = {}): TerminalSessionState {
   const fileSystem = createFileSystem(initialFileSystem);
   const currentDirectory = resolvePath(
@@ -34,6 +37,7 @@ export function createTerminalSession({
   let session: TerminalSessionState = {
     fileSystem,
     gitState: createGitState(),
+    httpState: createHttpState(mockHttpEndpointIds),
     currentDirectory,
     history: [],
     entries: [entry("system", welcomeMessage)],
@@ -83,17 +87,32 @@ export function runTerminalCommand(
             parsed.args,
           )
       : null;
+  const curlResult =
+    parsed.ok && parsed.command === "curl"
+      ? parsed.pipe || parsed.redirect
+        ? {
+            httpState: state.httpState,
+            output: [],
+            error:
+              "curl cannot use pipes or redirects in this Level 6 simulator.",
+          }
+        : executeCurlCommand(state.httpState, parsed.args)
+      : null;
   const result =
     gitResult ??
+    curlResult ??
     executeCommand(state.fileSystem, state.currentDirectory, trimmed);
   const inputEntry = entry("input", trimmed, state.currentDirectory);
   const outputEntries = result.error
     ? [entry("error", result.error)]
-    : result.output.map((line) => entry("output", line));
+    : curlResult
+      ? createHttpOutputEntries(curlResult.httpState, result.output)
+      : result.output.map((line) => entry("output", line));
 
   return {
-    fileSystem: result.fileSystem,
+    fileSystem: "fileSystem" in result ? result.fileSystem : state.fileSystem,
     gitState: gitResult?.gitState ?? state.gitState,
+    httpState: curlResult?.httpState ?? state.httpState,
     currentDirectory:
       "currentDirectory" in result
         ? result.currentDirectory
@@ -105,6 +124,41 @@ export function runTerminalCommand(
         : [...state.entries, inputEntry, ...outputEntries],
     lastOutput: result.error ? [] : result.output,
   };
+}
+
+function createHttpOutputEntries(
+  httpState: TerminalSessionState["httpState"],
+  output: string[],
+) {
+  const latest = httpState.history.at(-1);
+  if (!latest) {
+    return output.map((line) => entry("output", line));
+  }
+
+  const isError = latest.response.status >= 400;
+  if (!latest.request.includeResponseHeaders) {
+    return output.map((line) =>
+      entry(isError ? "http-error-body" : "http-body", line),
+    );
+  }
+
+  let inBody = false;
+  return output.map((line, index) => {
+    if (index === 0) {
+      return entry(
+        isError ? "http-error-status" : "http-status",
+        line,
+      );
+    }
+    if (line === "") {
+      inBody = true;
+      return entry(isError ? "http-error-body" : "http-body", line);
+    }
+    if (!inBody) {
+      return entry("http-header", line);
+    }
+    return entry(isError ? "http-error-body" : "http-body", line);
+  });
 }
 
 export function getHistoryCommand(

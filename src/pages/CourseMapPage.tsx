@@ -65,12 +65,13 @@ export function CourseMapPage() {
           <p>
             The current learning path now runs from basic computer concepts
             through terminal work, Git, and a practical mental model of modern
-            software systems.
+            software systems into safe, simulated HTTP and API practice.
           </p>
         </div>
         <ul>
           <li>Levels 1–4 complete: foundations, terminal, files, and Git.</li>
           <li>Level 5 complete: browser, server, HTTP, APIs, data, and deployment.</li>
+          <li>Level 6 complete: curl, requests, responses, APIs, and secret safety.</li>
           <li>Progress saves locally and survives refresh.</li>
           <li>Level 8 first three lessons remain MVP targets.</li>
         </ul>

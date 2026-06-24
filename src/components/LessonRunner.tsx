@@ -1015,13 +1015,17 @@ function TerminalStepSectionView({
       initialFileSystem: section.initialFileSystem,
       startingDirectory: section.startingDirectory,
       setupCommands: section.setupCommands,
+      mockHttpEndpointIds: section.mockHttpEndpointIds,
       welcomeMessage:
-        section.setupCommands?.some((command) => command.startsWith("git"))
+        section.mockHttpEndpointIds?.length
+          ? "This terminal uses an offline mock HTTP universe. curl cannot contact the internet or transmit real credentials."
+          : section.setupCommands?.some((command) => command.startsWith("git"))
           ? "This terminal and Git repository are simulated in the browser. They cannot touch your real files or contact GitHub."
           : "This terminal is simulated in the browser. It cannot touch your real files.",
     }),
     [
       section.initialFileSystem,
+      section.mockHttpEndpointIds,
       section.setupCommands,
       section.startingDirectory,
     ],

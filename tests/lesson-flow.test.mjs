@@ -136,6 +136,38 @@ const level4Solutions = {
   ]],
 };
 
+const level6Solutions = {
+  "6.2": [["curl https://api.creator-dashboard.test/health"]],
+  "6.3": [[
+    'curl "https://api.creator-dashboard.test/projects?status=active&limit=3"',
+  ]],
+  "6.5": [[
+    'curl -i -H "Accept: application/json" "https://api.creator-dashboard.test/projects?limit=1"',
+  ]],
+  "6.6": [[
+    'curl -i -X POST -H "Content-Type: application/json" -d \'{"title":"First project"}\' "https://api.creator-dashboard.test/projects"',
+  ]],
+  "6.7": [[
+    'curl "https://api.creator-dashboard.test/projects?limit=3"',
+  ]],
+  "6.9": [[
+    'curl -i -H "Authorization: Bearer ghp_demo_not_real" "https://api.github.test/user/repos"',
+  ]],
+  "6.11": [[
+    "curl -i https://api.creator-dashboard.test/",
+    "curl -i https://api.creator-dashboard.test/tasks",
+    'curl -i -X POST -H "Content-Type: application/json" -d \'{bad json}\' https://api.creator-dashboard.test/projects',
+    "curl -i https://api.creator-dashboard.test/users/me",
+    'curl -i -X POST -d \'{"title":"No header"}\' https://api.creator-dashboard.test/projects',
+    "curl -i https://api.creator-dashboard.test/missing",
+    'curl -i "https://api.github.test/user/repos?simulate=rate-limit"',
+    'curl -i "https://api.creator-dashboard.test/projects?simulate=server-error"',
+  ]],
+  "6.12": [[
+    'curl -H "Accept: application/json" "https://api.creator-dashboard.test/projects?status=active"',
+  ]],
+};
+
 test("all Level 2 and Level 3 lessons have at least one terminalStep", () => {
   for (const levelId of [2, 3]) {
     const levelLessons = playableLessons.filter((lesson) => lesson.levelId === levelId);
@@ -259,6 +291,60 @@ test("all 14 Level 5 lessons are playable, interactive, and Codex-relevant", () 
   assert.equal(getLessonById("5.14")?.nextLessonId, "6.1");
 });
 
+test("all 12 Level 6 lessons are playable, interactive, and Codex-relevant", () => {
+  const levelLessons = playableLessons.filter((lesson) => lesson.levelId === 6);
+  assert.deepEqual(
+    levelLessons.map((lesson) => lesson.id),
+    Array.from({ length: 12 }, (_, index) => `6.${index + 1}`),
+  );
+
+  for (const lesson of levelLessons) {
+    assert.ok(
+      lesson.sections.some((section) => section.type !== "narrative"),
+      `${lesson.id} needs an active interaction`,
+    );
+    assert.equal(
+      lesson.sections.filter(
+        (section) =>
+          section.type === "narrative" &&
+          section.title === "Why this matters with Codex",
+      ).length,
+      1,
+      `${lesson.id} needs one Codex relevance section`,
+    );
+  }
+
+  assert.equal(getLessonById("6.12")?.nextLessonId, "7.1");
+});
+
+test("Level 6 HTTP terminal lessons validate their intended requests", () => {
+  for (const [lessonId, stepSolutions] of Object.entries(level6Solutions)) {
+    const lesson = getLessonById(lessonId);
+    assert.ok(lesson, lessonId);
+    const steps = lesson.sections.filter((section) => section.type === "terminalStep");
+    assert.equal(steps.length, stepSolutions.length, lessonId);
+
+    for (const [index, commands] of stepSolutions.entries()) {
+      const result = runTerminalStep(steps[index], commands);
+      assert.equal(
+        result.ok,
+        true,
+        `${lessonId} step ${index + 1}: ${result.message}`,
+      );
+    }
+  }
+});
+
+test("learner can complete GET, query, POST, authorization, error, and final translation prerequisites", () => {
+  for (const lessonId of ["6.2", "6.3", "6.6", "6.9", "6.11", "6.12"]) {
+    const lesson = getLessonById(lessonId);
+    assert.ok(lesson);
+    const step = lesson.sections.find((section) => section.type === "terminalStep");
+    assert.ok(step);
+    assert.equal(runTerminalStep(step, level6Solutions[lessonId][0]).ok, true);
+  }
+});
+
 test("every Level 4 terminal exercise can be completed with intended commands", () => {
   for (const [lessonId, stepSolutions] of Object.entries(level4Solutions)) {
     const lesson = getLessonById(lessonId);
@@ -344,6 +430,7 @@ function runTerminalStep(step, commands) {
     initialFileSystem: step.initialFileSystem,
     startingDirectory: step.startingDirectory,
     setupCommands: step.setupCommands,
+    mockHttpEndpointIds: step.mockHttpEndpointIds,
   });
 
   for (const command of commands) {

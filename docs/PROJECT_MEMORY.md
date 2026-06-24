@@ -27,9 +27,12 @@ Current repo shape:
 - `src/content/level3Lessons.ts` contains the complete playable Level 3 lesson set.
 - `src/content/level4Lessons.ts` contains the complete playable Level 4 lesson set.
 - `src/content/level5Lessons.ts` contains the complete playable Level 5 lesson set.
+- `src/content/level6Lessons.ts` contains the complete playable Level 6 lesson set.
 - `src/concepts/` contains framework-free Level 5 interaction logic.
 - `src/terminal/` contains the browser-safe virtual terminal simulator.
 - `src/git/` contains the browser-safe Git simulator and validation.
+- `src/http/` contains the browser-safe mock HTTP router, curl parser, state,
+  endpoints, and validation.
 - `src/progress/progressStore.ts` contains localStorage progress persistence.
 - No Supabase, auth implementation, progress sync, achievements, or real terminal execution yet.
 
@@ -38,7 +41,7 @@ Current repo shape:
 - The project is in active curriculum implementation.
 - The intended product is zero2codex: a free, gamified, beginner-friendly course that teaches coding fundamentals and OpenAI Codex workflows.
 - The reference inspiration is `zero2claude.dev`.
-- The current app has a public course map plus playable Levels 1 through 5.
+- The current app has a public course map plus playable Levels 1 through 6.
 - The desired product is a web course/app with interactive lessons, progress, gamification, terminal/Codex practice, and eventually community and admin tools.
 - Google OAuth is postponed.
 - The next auth phase should use Supabase email/password.
@@ -66,11 +69,14 @@ Current repo shape:
 - `src/content/level3Lessons.ts`: Level 3 reading/writing/searching lesson content.
 - `src/content/level4Lessons.ts`: Level 4 Git lesson content.
 - `src/content/level5Lessons.ts`: Level 5 software-systems lesson content.
+- `src/content/level6Lessons.ts`: Level 6 HTTP/API lesson content.
 - `src/components/ConceptInteraction.tsx`: Level 5 conceptual interaction UI.
 - `src/concepts/levelFiveValidation.ts`: pure Level 5 state and validation.
 - `src/terminal/`: path resolver, virtual file system, parser, command handlers, terminal state, and validation helpers.
 - `src/git/`: Git snapshots, staging, history, branches, merges, mocked remotes,
   and lesson validation.
+- `src/http/`: fictional-host URL parsing, curl parsing, endpoint catalog,
+  routing, request history, response formatting, and lesson validation.
 - `src/components/LessonRunner.tsx`: section-based lesson runner.
 - `src/foundations/levelOneValidation.ts`: Level 1 interaction validation.
 - `src/components/TerminalPanel.tsx`: browser-safe terminal UI.
@@ -110,7 +116,7 @@ npm run build
 Current browser-safe terminal commands:
 
 ```text
-pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, clear, help
+pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, curl, clear, help
 ```
 
 Supported shell-like syntax is intentionally limited to one pipe plus `>` and
@@ -148,11 +154,20 @@ Level 5 concept support:
 - Assignment sorting, ordered flows, request/response walkthroughs, JSON
   inspection, data-table decisions, and system builders.
 - All software-system models remain in-browser teaching simulations.
-- No real HTTP, API, SQL, database, hosting, deployment, or DNS operation.
+- No real SQL, database, hosting, deployment, or DNS operation.
+
+Level 6 HTTP support:
+
+- Fictional `.test` hosts only, enabled per lesson.
+- Simulated GET/POST, query parameters, request headers, JSON bodies, response
+  headers, status codes, errors, and resettable request history.
+- `curl` supports only `-i`, `-X`, `-H`, and `-d`.
+- No `fetch`, XMLHttpRequest, live HTTP, credentials, backend, GitHub, or
+  OpenAI connection.
 
 ## Unknowns To Resolve
 
 - What exact Supabase project and environment variables should be used?
 - Should MVP email auth require email confirmation?
 - What exact Level 8 Codex teaser should follow auth and progress work?
-- Whether Supabase auth or Level 6 should follow the completed Level 5 slice.
+- Whether Supabase auth or Level 7 should follow the completed Level 6 slice.

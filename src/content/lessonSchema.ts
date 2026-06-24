@@ -6,6 +6,7 @@ import type {
   OutputExpectation,
 } from "../terminal/validation.ts";
 import type { GitExpectation } from "../git/validation.ts";
+import type { HttpExpectation } from "../http/validation.ts";
 
 const commandExpectationSchema = z.union([
   z.string().min(1),
@@ -70,6 +71,34 @@ const gitExpectationSchema = z.object({
   workingDiffContains: z.array(z.string().min(1)).optional(),
   stagedDiffContains: z.array(z.string().min(1)).optional(),
   conflictFiles: z.array(z.string().min(1)).optional(),
+});
+
+const httpDiagnosisSchema = z.enum([
+  "wrong-url",
+  "missing-query",
+  "invalid-json",
+  "missing-authorization",
+  "wrong-authorization",
+  "wrong-content-type",
+  "not-found",
+  "rate-limit",
+  "server-error",
+]);
+
+const httpExpectationSchema = z.object({
+  requestCount: z.number().int().nonnegative().optional(),
+  method: z.enum(["GET", "POST"]).optional(),
+  host: z.string().min(1).optional(),
+  path: z.string().min(1).optional(),
+  query: z.record(z.string(), z.string()).optional(),
+  headers: z.record(z.string(), z.string()).optional(),
+  jsonBody: z.unknown().optional(),
+  status: z.number().int().min(100).max(599).optional(),
+  responseBodyContains: z.array(z.string().min(1)).optional(),
+  responseJsonPaths: z.array(z.string().min(1)).optional(),
+  diagnosis: httpDiagnosisSchema.optional(),
+  historyStatuses: z.array(z.number().int().min(100).max(599)).optional(),
+  historyDiagnoses: z.array(httpDiagnosisSchema).optional(),
 });
 
 const baseSectionSchema = z.object({
@@ -407,11 +436,13 @@ export const terminalStepSectionSchema = baseSectionSchema.extend({
   initialFileSystem: z.record(z.string(), z.custom<FileTreeInput>()).optional(),
   startingDirectory: z.string().min(1).optional(),
   setupCommands: z.array(z.string().min(1)).optional(),
+  mockHttpEndpointIds: z.array(z.string().min(1)).optional(),
   expectedCommands: z.array(commandExpectationSchema).optional(),
   expectedCurrentDirectory: z.string().min(1).optional(),
   expectedFileSystem: fileSystemExpectationSchema.optional(),
   expectedOutput: outputExpectationSchema.optional(),
   expectedGit: gitExpectationSchema.optional(),
+  expectedHttp: httpExpectationSchema.optional(),
   successMessage: z.string().min(1),
   hint: z.string().min(1),
   failureFeedback: z.string().min(1),
@@ -454,12 +485,13 @@ export type ConceptInteractionSection = z.infer<
 >;
 export type TerminalStepSection = Omit<
   z.infer<typeof terminalStepSectionSchema>,
-  "expectedCommands" | "expectedFileSystem" | "expectedGit"
+  "expectedCommands" | "expectedFileSystem" | "expectedGit" | "expectedHttp"
 > & {
   expectedCommands?: CommandExpectation[];
   expectedFileSystem?: FileSystemExpectation;
   expectedOutput?: OutputExpectation;
   expectedGit?: GitExpectation;
+  expectedHttp?: HttpExpectation;
 };
 export type LessonSection =
   | NarrativeSection

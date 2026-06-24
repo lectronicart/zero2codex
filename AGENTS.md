@@ -20,7 +20,7 @@ git status --short
 
 ## Current Implementation Boundary
 
-The current app includes the scaffold plus playable Levels 1 through 5:
+The current app includes the scaffold plus playable Levels 1 through 6:
 
 - Route shell.
 - Design tokens.
@@ -30,8 +30,10 @@ The current app includes the scaffold plus playable Levels 1 through 5:
 - Complete Level 3 reading-and-writing-files lessons.
 - Complete Level 4 Git lessons.
 - Complete Level 5 software-systems concept lessons.
+- Complete Level 6 browser-safe HTTP and API lessons.
 - Browser-safe virtual terminal simulator.
 - Browser-safe Git simulator layered on the virtual file system.
+- Browser-safe mock HTTP router and simulated `curl`.
 - Local progress persistence through `localStorage`.
 - Placeholder login/register routes and planned-lesson fallback routes.
 
@@ -41,7 +43,9 @@ until files for those systems are added.
 
 The virtual terminal currently supports `pwd`, `ls`, `cd`, `mkdir`, `touch`,
 `rm`, `cp`, `mv`, `cat`, `head`, `tail`, `echo`, `grep`, `rg`, `wc`, `clear`,
-`git`, and `help`, plus one pipe and basic `>` / `>>` redirects.
+`git`, `curl`, and `help`, plus one pipe and basic `>` / `>>` redirects.
+Simulated `curl` accepts only fictional lesson-enabled `.test` endpoints and
+never calls the browser network stack.
 
 ## Product Rules
 
@@ -77,6 +81,6 @@ The virtual terminal currently supports `pwd`, `ls`, `cd`, `mkdir`, `touch`,
 2. Add authenticated progress sync.
 3. Add the first Codex teaser lessons.
 4. Add starter achievements.
-5. Continue with Level 6 HTTP practice.
+5. Continue with Level 7 package-manager and project-setup concepts.
 
 Google OAuth remains postponed.

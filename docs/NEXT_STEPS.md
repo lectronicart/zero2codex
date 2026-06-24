@@ -31,7 +31,7 @@ Last updated: 2026-06-24
 ## Later
 
 - Add starter achievements.
-- Build Levels 6 and 7.
+- Build Level 7.
 - Expand Level 8 and advanced Codex workflows.
 - Add review mode, dashboard, notes, community, analytics, and admin features
   only after the core learning loop is validated.
@@ -47,6 +47,9 @@ Last updated: 2026-06-24
 - Browser-safe Git simulator.
 - Complete playable Level 4 and Full Git Workflow Challenge.
 - Complete playable Level 5 with 14 browser-safe software-system lessons.
+- Complete playable Level 6 with 12 offline HTTP/API lessons.
+- Browser-safe mock HTTP router, simulated curl, and structured HTTP lesson
+  validation.
 - Reusable conceptual interaction schema, renderers, and pure validation.
 - Unit, content, build, accessibility-oriented, responsive, and Playwright
   verification for the current learning path.
@@ -66,7 +69,7 @@ npm run build
 
 ```text
 Read README.md, AGENTS.md, docs/HANDOFF.md, docs/DECISIONS.md,
-docs/NEXT_STEPS.md, the build guide, and the Level 5 handoff. Confirm the live
+docs/NEXT_STEPS.md, the build guide, and the Level 6 handoff. Confirm the live
 preview is running at http://127.0.0.1:4187/. Then implement Supabase
 email/password authentication while preserving anonymous local progress for
 future migration. Keep Google OAuth postponed.

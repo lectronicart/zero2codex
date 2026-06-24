@@ -857,7 +857,8 @@ h3 {
   font-size: 13px;
 }
 
-.git-state-strip {
+.git-state-strip,
+.http-state-strip {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 14px;
@@ -869,13 +870,44 @@ h3 {
   padding: 8px 12px;
 }
 
-.git-state-strip strong {
+.git-state-strip strong,
+.http-state-strip strong {
   color: var(--accent-blue);
 }
 
 .git-state-warning,
 .git-state-warning strong {
   color: var(--accent-amber);
+}
+
+.http-state-strip {
+  background: rgba(99, 224, 183, 0.07);
+}
+
+.http-state-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+
+.http-state-label {
+  border-radius: 999px;
+  background: rgba(99, 224, 183, 0.13);
+  color: var(--accent-green);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  text-transform: uppercase;
+}
+
+.http-state-strip strong {
+  overflow-wrap: anywhere;
+}
+
+.http-state-safety {
+  color: var(--accent-green);
+  font-weight: 700;
 }
 
 .terminal-line {
@@ -902,6 +934,48 @@ h3 {
 .terminal-line-success,
 .feedback-success {
   color: var(--accent);
+}
+
+.terminal-line-http-status,
+.terminal-line-http-error-status {
+  border-left: 3px solid var(--accent-green);
+  border-radius: 4px;
+  background: rgba(99, 224, 183, 0.1);
+  color: var(--accent-green);
+  font-weight: 800;
+  padding: 6px 8px;
+}
+
+.terminal-line-http-error-status {
+  border-left-color: var(--danger);
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--danger);
+}
+
+.terminal-line-http-header {
+  color: var(--accent-blue);
+  padding-left: 11px;
+}
+
+.terminal-line-http-body {
+  color: #d7e2de;
+  padding-left: 11px;
+}
+
+.terminal-line-http-error-body {
+  border-left: 3px solid rgba(255, 107, 107, 0.55);
+  color: #ffb5b5;
+  padding-left: 8px;
+}
+
+.terminal-line-http-status + .terminal-line-http-header,
+.terminal-line-http-error-status + .terminal-line-http-header,
+.terminal-line-http-header + .terminal-line-http-header,
+.terminal-line-http-header + .terminal-line-http-body,
+.terminal-line-http-header + .terminal-line-http-error-body,
+.terminal-line-http-body + .terminal-line-http-body,
+.terminal-line-http-error-body + .terminal-line-http-error-body {
+  margin-top: 3px;
 }
 
 .terminal-input-row {

@@ -18,6 +18,7 @@ const level2Lessons = playableLessons.filter((lesson) => lesson.levelId === 2);
 const level3Lessons = playableLessons.filter((lesson) => lesson.levelId === 3);
 const level4Lessons = playableLessons.filter((lesson) => lesson.levelId === 4);
 const level5Lessons = playableLessons.filter((lesson) => lesson.levelId === 5);
+const level6Lessons = playableLessons.filter((lesson) => lesson.levelId === 6);
 
 if (courseStats.totalLevels !== 17) {
   errors.push(`Expected 17 levels, found ${courseStats.totalLevels}.`);
@@ -55,6 +56,10 @@ if (level4Lessons.length !== 17) {
 
 if (level5Lessons.length !== 14) {
   errors.push(`Expected 14 playable Level 5 lessons, found ${level5Lessons.length}.`);
+}
+
+if (level6Lessons.length !== 12) {
+  errors.push(`Expected 12 playable Level 6 lessons, found ${level6Lessons.length}.`);
 }
 
 for (const lesson of level1Lessons) {
@@ -111,6 +116,26 @@ for (const lesson of level5Lessons) {
   }
 }
 
+for (const lesson of level6Lessons) {
+  const activeSections = lesson.sections.filter(
+    (section) => section.type !== "narrative",
+  );
+  if (activeSections.length === 0) {
+    errors.push(`${lesson.id} has no active interaction.`);
+  }
+
+  const codexSections = lesson.sections.filter(
+    (section) =>
+      section.type === "narrative" &&
+      section.title === "Why this matters with Codex",
+  );
+  if (codexSections.length !== 1) {
+    errors.push(
+      `${lesson.id} must have exactly one "Why this matters with Codex" section.`,
+    );
+  }
+}
+
 if (errors.length > 0) {
   for (const error of errors) {
     console.error(error);
@@ -118,6 +143,6 @@ if (errors.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Content OK: ${courseStats.totalLevels} levels, ${courseStats.totalLessons} map lessons, ${level1Lessons.length} Level 1 lessons, ${level2Lessons.length} Level 2 lessons, ${level3Lessons.length} Level 3 lessons, ${level4Lessons.length} Level 4 lessons, ${level5Lessons.length} Level 5 lessons.`,
+    `Content OK: ${courseStats.totalLevels} levels, ${courseStats.totalLessons} map lessons, ${level1Lessons.length} Level 1 lessons, ${level2Lessons.length} Level 2 lessons, ${level3Lessons.length} Level 3 lessons, ${level4Lessons.length} Level 4 lessons, ${level5Lessons.length} Level 5 lessons, ${level6Lessons.length} Level 6 lessons.`,
   );
 }

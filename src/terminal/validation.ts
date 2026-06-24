@@ -5,6 +5,10 @@ import {
   validateGitExpectation,
   type GitExpectation,
 } from "../git/validation.ts";
+import {
+  validateHttpExpectation,
+  type HttpExpectation,
+} from "../http/validation.ts";
 
 export type CommandExpectation =
   | string
@@ -34,6 +38,7 @@ export type TerminalStepValidationInput = {
   expectedFileSystem?: FileSystemExpectation;
   expectedOutput?: OutputExpectation;
   expectedGit?: GitExpectation;
+  expectedHttp?: HttpExpectation;
   successMessage: string;
   failureFeedback: string;
 };
@@ -81,6 +86,11 @@ export function validateTerminalStep(
   const gitResult = validateGitExpectation(step.expectedGit, state);
   if (!gitResult.ok) {
     return { ok: false, message: gitResult.message || step.failureFeedback };
+  }
+
+  const httpResult = validateHttpExpectation(step.expectedHttp, state);
+  if (!httpResult.ok) {
+    return { ok: false, message: httpResult.message || step.failureFeedback };
   }
 
   return { ok: true, message: step.successMessage };

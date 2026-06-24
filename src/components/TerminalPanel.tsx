@@ -7,6 +7,7 @@ import {
 } from "../terminal/state";
 import type { TerminalSessionState } from "../terminal/types.ts";
 import { getGitWorkspaceSummary } from "../git/simulator.ts";
+import { getHttpSummary } from "../http/state.ts";
 
 type TerminalPanelProps = {
   config: TerminalSessionConfig;
@@ -26,6 +27,10 @@ export function TerminalPanel({ config, onChange }: TerminalPanelProps) {
         session.gitState,
       ),
     [session.currentDirectory, session.fileSystem, session.gitState],
+  );
+  const httpSummary = useMemo(
+    () => getHttpSummary(session.httpState),
+    [session.httpState],
   );
 
   useEffect(() => {
@@ -81,6 +86,29 @@ export function TerminalPanel({ config, onChange }: TerminalPanelProps) {
               Conflicts <strong>{gitSummary.conflictCount}</strong>
             </span>
           ) : null}
+        </div>
+      ) : null}
+      {httpSummary ? (
+        <div className="http-state-strip" aria-label="Simulated HTTP state">
+          <span className="http-state-group">
+            <span className="http-state-label">Request</span>
+            <span>
+              Method <strong>{httpSummary.method}</strong>
+            </span>
+            <span>
+              Path <strong>{httpSummary.path}</strong>
+            </span>
+          </span>
+          <span className="http-state-group">
+            <span className="http-state-label">Response</span>
+            <span>
+              Status <strong>{httpSummary.status}</strong>
+            </span>
+          </span>
+          <span>
+            Requests <strong>{httpSummary.requestCount}</strong>
+          </span>
+          <span className="http-state-safety">Offline mock only</span>
         </div>
       ) : null}
       <div

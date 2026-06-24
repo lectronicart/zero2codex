@@ -24,12 +24,14 @@ Implemented now:
 - Playable Level 3 reading-and-writing-files path with 13 lessons.
 - Playable Level 4 Git-learning path with 17 lessons.
 - Playable Level 5 software-systems path with 14 lessons.
+- Playable Level 6 HTTP/API path with 12 lessons.
 - Reusable file, folder, path, file-type, program, and terminal concept interactions.
 - Browser-safe virtual terminal with an in-memory file system.
 - Safe simulated support for file inspection, writing, appending, search, pipes,
   and counts.
 - Browser-safe Git repositories, staging, commits, diffs, branches, merges,
   restore, mocked remotes, push, pull, and clone.
+- Browser-safe mock HTTP routing and a deliberately limited simulated `curl`.
 - Local progress storage for lesson completion and resume state.
 - Placeholder routes for `/login` and `/register`.
 
@@ -91,7 +93,7 @@ learner's computer and never connects to a backend shell.
 Supported terminal commands:
 
 ```text
-pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, clear, help
+pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, curl, clear, help
 ```
 
 Supported Git commands:
@@ -130,6 +132,38 @@ echo "hello" > notes.txt
 echo "another line" >> notes.txt
 ```
 
+Supported simulated curl syntax:
+
+```text
+curl <mock-url>
+curl -i <mock-url>
+curl -X GET <mock-url>
+curl -X POST <mock-url>
+curl -H "Header-Name: value" <mock-url>
+curl -d '{"key":"value"}' <mock-url>
+```
+
+Flags may be combined for Level 6 exercises. `-d` defaults to `POST` unless
+`-X` is supplied. Quote URLs containing `&`.
+
+The mock API universe includes:
+
+```text
+https://api.creator-dashboard.test/health
+https://api.creator-dashboard.test/projects
+https://api.creator-dashboard.test/projects/:id
+https://api.creator-dashboard.test/tasks
+https://api.creator-dashboard.test/users/me
+https://api.github.test/user/repos
+https://api.github.test/repos/demo-user/demo-project/issues
+https://api.github.test/repos/demo-user/demo-project/pulls
+https://api.openai.test/v1/models
+```
+
+Endpoints are enabled per lesson. Requests are parsed and routed entirely
+in memory; the simulator never uses `fetch`, XMLHttpRequest, a service worker,
+or a backend. Only the fictional `.test` hosts above are accepted.
+
 Known limitations:
 
 - The parser intentionally supports only one pipe at a time.
@@ -142,8 +176,14 @@ Known limitations:
 - `git pull` supports clean fast-forward learning scenarios and stops on
   divergent history.
 - `git clone` accepts only built-in lesson repository URLs.
+- `curl` supports only `GET`, `POST`, `-i`, `-X`, `-H`, and `-d`.
+- It accepts one URL per command and intentionally omits cookies, uploads,
+  redirects, compression, certificates, streaming, WebSockets, and the full
+  HTTP/curl specifications.
+- Pipes and file redirects are not available for simulated `curl`.
+- Only lesson-enabled fictional endpoints can return a response.
 - No command reaches GitHub, a backend, a real shell, or the learner's files.
-- Codex CLI, curl, backend APIs, and Supabase are not implemented yet.
+- Codex CLI, live HTTP, backend APIs, and Supabase are not implemented yet.
 
 ## Level 1 Architecture
 
@@ -240,6 +280,28 @@ Key files:
 5. Keep diagrams readable as text and operable with buttons and selects.
 6. Register new lesson files in `src/content/lessons.ts`.
 7. Add pure validation tests and rendered tests for important workflows.
+
+## Level 6 Mock HTTP Architecture
+
+Level 6, "Talk to the Internet," adds an offline HTTP model to the existing
+terminal without adding browser networking.
+
+Key files:
+
+- `src/http/types.ts`: serializable request, response, exchange, and endpoint types.
+- `src/http/url.ts`: strict fictional-host URL parsing.
+- `src/http/curl.ts`: intentionally limited curl argument parsing and output.
+- `src/http/endpoints.ts`: lesson-safe mock endpoint definitions.
+- `src/http/router.ts`: method, host, and path routing.
+- `src/http/state.ts`: resettable per-lesson request history.
+- `src/http/validation.ts`: structured request/response lesson assertions.
+- `src/content/level6Lessons.ts`: all 12 Level 6 lessons.
+- `tests/http-simulator.test.mjs`: HTTP/parser/routing/safety unit coverage.
+- `tests/e2e/level-six.spec.mjs`: rendered HTTP learning workflows.
+
+All credentials shown in Level 6 are visibly fake: `DEMO_TOKEN`,
+`sk-demo-not-real`, and `ghp_demo_not_real`. They cannot access any real
+service.
 
 ## MVP Direction
 

@@ -69,6 +69,18 @@ test("Level 5 progress persists through the existing storage shape", () => {
   assert.equal(reloaded.sectionHighWaterMark["5.14"], 3);
 });
 
+test("Level 6 progress persists through the existing storage shape", () => {
+  const storage = memoryStorage();
+  let progress = updateLessonPosition(defaultProgressState, "6.12", 3);
+  progress = completeLesson(progress, "6.12", "2026-06-24T18:00:00.000Z");
+  saveProgress(progress, storage);
+
+  const reloaded = loadProgress(storage);
+  assert.ok(reloaded.completedLessons.includes("6.12"));
+  assert.equal(reloaded.currentLessonId, "6.12");
+  assert.equal(reloaded.sectionHighWaterMark["6.12"], 3);
+});
+
 test("restarting a lesson clears section resume state", () => {
   const progress = updateLessonPosition(defaultProgressState, "2.1", 2);
   const restarted = restartLesson(progress, "2.1");
@@ -95,4 +107,19 @@ test("terminal reset starts from the original lesson file system", () => {
 
   const reset = createTerminalSession(config);
   assert.equal(getNode(reset.fileSystem, "/home/codex/scratch"), null);
+});
+
+test("terminal reset clears lesson-scoped simulated HTTP request history", () => {
+  const config = {
+    mockHttpEndpointIds: ["creator.health"],
+  };
+  const changed = runTerminalCommand(
+    createTerminalSession(config),
+    "curl https://api.creator-dashboard.test/health",
+  );
+  assert.equal(changed.httpState.history.length, 1);
+
+  const reset = createTerminalSession(config);
+  assert.equal(reset.httpState.history.length, 0);
+  assert.deepEqual(reset.httpState.enabledEndpointIds, ["creator.health"]);
 });

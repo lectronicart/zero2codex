@@ -237,7 +237,10 @@ test("help explains supported commands", () => {
 
 test("invalid paths and unsupported commands produce beginner-friendly errors", () => {
   assert.match(run(start(), "cd missing").error, /does not exist/);
-  assert.match(run(start(), "curl https://example.com").error, /not supported/);
+  assert.match(
+    run(start(), "curl https://example.com").error,
+    /offline mock HTTP environment/,
+  );
   assert.match(run(advancedStart(), "grep hello docs").error, /recursive search/);
   assert.match(run(advancedStart(), "cat notes.txt | grep hello | wc -l").error, /one pipe/);
   assert.match(run(advancedStart(), "echo hello >").error, /file path/);

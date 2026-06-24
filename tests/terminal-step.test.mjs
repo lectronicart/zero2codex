@@ -121,3 +121,35 @@ test("terminalStep validation checks Git repository state", () => {
     message: "saved",
   });
 });
+
+test("terminalStep validation checks structured simulated HTTP state", () => {
+  const step = {
+    expectedCommands: [
+      'curl -X POST -H "Content-Type: application/json" -d \'{"title":"First project"}\' https://api.creator-dashboard.test/projects',
+    ],
+    expectedHttp: {
+      requestCount: 1,
+      method: "POST",
+      host: "api.creator-dashboard.test",
+      path: "/projects",
+      headers: { "Content-Type": "application/json" },
+      jsonBody: { title: "First project" },
+      status: 201,
+      responseJsonPaths: ["project"],
+    },
+    successMessage: "created",
+    failureFeedback: "not created",
+  };
+
+  let state = createTerminalSession({
+    mockHttpEndpointIds: ["creator.projects.create"],
+  });
+  state = runTerminalCommand(
+    state,
+    'curl -X POST -H "Content-Type: application/json" -d \'{"title":"First project"}\' https://api.creator-dashboard.test/projects',
+  );
+  assert.deepEqual(validateTerminalStep(step, state), {
+    ok: true,
+    message: "created",
+  });
+});

@@ -20,7 +20,7 @@ import type {
 } from "./types.ts";
 
 const helpText = [
-  "Supported commands: pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, clear, help.",
+  "Supported commands: pwd, ls, cd, mkdir, touch, rm, cp, mv, cat, head, tail, echo, grep, rg, wc, git, curl, clear, help.",
   "Supported syntax: one pipe with |, overwrite with >, append with >>.",
   "Paths can be relative, absolute with /, parent folders with .., or home with ~.",
   "This is a browser-safe simulator. It never runs commands on your computer.",
@@ -230,6 +230,13 @@ function runSimpleCommand(
       case "help":
         requireArgCount(command, args, 0);
         return success(fileSystem, currentDirectory, helpText);
+
+      case "curl":
+        return failure(
+          fileSystem,
+          currentDirectory,
+          "curl is available only through a lesson's offline mock HTTP environment.",
+        );
 
       default:
         return failure(
