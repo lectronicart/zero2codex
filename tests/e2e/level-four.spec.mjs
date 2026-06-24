@@ -109,7 +109,7 @@ test("Full Git Workflow Challenge validates final state and routes to Level 5", 
   await page.getByRole("link", { name: "Continue to lesson 5.1" }).click();
   await expect(page).toHaveURL(/\/lesson\/5\.1$/);
   await expect(page.getByRole("heading", { name: "What Is Code?" })).toBeVisible();
-  await expect(page.getByText("Planned lesson")).toBeVisible();
+  await expect(page.getByText("Turn an input into an output")).toBeVisible();
 });
 
 test("Git mistakes show recovery guidance and reset restores lesson state", async ({

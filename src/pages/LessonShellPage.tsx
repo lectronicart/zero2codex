@@ -34,7 +34,7 @@ export function LessonShellPage() {
       <div className="route-shell-panel">
         <h2>Planned lesson</h2>
         <p>
-          This lesson is still in the content backlog. Levels 1 through 4 are
+          This lesson is still in the content backlog. Levels 1 through 5 are
           the current playable learning path.
         </p>
       </div>

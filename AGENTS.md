@@ -20,7 +20,7 @@ git status --short
 
 ## Current Implementation Boundary
 
-The current app includes the scaffold plus playable Levels 1 through 4:
+The current app includes the scaffold plus playable Levels 1 through 5:
 
 - Route shell.
 - Design tokens.
@@ -29,6 +29,7 @@ The current app includes the scaffold plus playable Levels 1 through 4:
 - Complete Level 2 terminal-learning lessons.
 - Complete Level 3 reading-and-writing-files lessons.
 - Complete Level 4 Git lessons.
+- Complete Level 5 software-systems concept lessons.
 - Browser-safe virtual terminal simulator.
 - Browser-safe Git simulator layered on the virtual file system.
 - Local progress persistence through `localStorage`.
@@ -72,10 +73,10 @@ The virtual terminal currently supports `pwd`, `ls`, `cd`, `mkdir`, `touch`,
 
 ## Near-Term Roadmap
 
-1. Implement Level 5 "How Software Actually Works."
-2. Add Supabase email/password auth.
-3. Add authenticated progress sync.
-4. Add the first Codex teaser lessons.
-5. Add starter achievements.
+1. Add Supabase email/password auth.
+2. Add authenticated progress sync.
+3. Add the first Codex teaser lessons.
+4. Add starter achievements.
+5. Continue with Level 6 HTTP practice.
 
 Google OAuth remains postponed.

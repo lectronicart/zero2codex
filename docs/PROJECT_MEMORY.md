@@ -1,6 +1,6 @@
 # Project Memory
 
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 
 ## Project Snapshot
 
@@ -26,6 +26,8 @@ Current repo shape:
 - `src/content/level2Lessons.ts` contains the complete playable Level 2 lesson set.
 - `src/content/level3Lessons.ts` contains the complete playable Level 3 lesson set.
 - `src/content/level4Lessons.ts` contains the complete playable Level 4 lesson set.
+- `src/content/level5Lessons.ts` contains the complete playable Level 5 lesson set.
+- `src/concepts/` contains framework-free Level 5 interaction logic.
 - `src/terminal/` contains the browser-safe virtual terminal simulator.
 - `src/git/` contains the browser-safe Git simulator and validation.
 - `src/progress/progressStore.ts` contains localStorage progress persistence.
@@ -33,10 +35,10 @@ Current repo shape:
 
 ## Known Facts
 
-- The project is in its initial setup phase.
+- The project is in active curriculum implementation.
 - The intended product is zero2codex: a free, gamified, beginner-friendly course that teaches coding fundamentals and OpenAI Codex workflows.
 - The reference inspiration is `zero2claude.dev`.
-- The current app has a public course map plus playable Levels 1 through 4.
+- The current app has a public course map plus playable Levels 1 through 5.
 - The desired product is a web course/app with interactive lessons, progress, gamification, terminal/Codex practice, and eventually community and admin tools.
 - Google OAuth is postponed.
 - The next auth phase should use Supabase email/password.
@@ -63,6 +65,9 @@ Current repo shape:
 - `src/content/level2Lessons.ts`: Level 2 terminal lesson content.
 - `src/content/level3Lessons.ts`: Level 3 reading/writing/searching lesson content.
 - `src/content/level4Lessons.ts`: Level 4 Git lesson content.
+- `src/content/level5Lessons.ts`: Level 5 software-systems lesson content.
+- `src/components/ConceptInteraction.tsx`: Level 5 conceptual interaction UI.
+- `src/concepts/levelFiveValidation.ts`: pure Level 5 state and validation.
 - `src/terminal/`: path resolver, virtual file system, parser, command handlers, terminal state, and validation helpers.
 - `src/git/`: Git snapshots, staging, history, branches, merges, mocked remotes,
   and lesson validation.
@@ -138,11 +143,16 @@ Level 4 Git support:
 - State is rebuilt from lesson files plus deterministic setup commands on reset.
 - No real Git process, GitHub connection, authentication, or network access.
 
+Level 5 concept support:
+
+- Assignment sorting, ordered flows, request/response walkthroughs, JSON
+  inspection, data-table decisions, and system builders.
+- All software-system models remain in-browser teaching simulations.
+- No real HTTP, API, SQL, database, hosting, deployment, or DNS operation.
+
 ## Unknowns To Resolve
 
 - What exact Supabase project and environment variables should be used?
 - Should MVP email auth require email confirmation?
 - What exact Level 8 Codex teaser should follow auth and progress work?
-- Whether Level 5 or Supabase auth should follow the completed Level 4 course
-  slice if product sequencing changes.
-- What exact Supabase project and environment variables should be used?
+- Whether Supabase auth or Level 6 should follow the completed Level 5 slice.

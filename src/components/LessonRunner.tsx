@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import type {
   ChecklistSection,
+  ConceptInteractionSection,
   FillInBlankSection,
   FoundationInteractionSection,
   FoundationTreeNode,
@@ -26,6 +27,7 @@ import {
 import type { TerminalSessionState } from "../terminal/types.ts";
 import { validateTerminalStep } from "../terminal/validation.ts";
 import { TerminalPanel } from "./TerminalPanel";
+import { ConceptInteraction } from "./ConceptInteraction";
 
 type LessonRunnerProps = {
   lesson: Lesson;
@@ -51,6 +53,13 @@ export function LessonRunner({ lesson }: LessonRunnerProps) {
   useEffect(() => {
     setLessonPosition(lesson.id, sectionIndex);
   }, [lesson.id, sectionIndex, setLessonPosition]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [sectionIndex]);
 
   function goNext() {
     const nextIndex = sectionIndex + 1;
@@ -178,6 +187,10 @@ function SectionRenderer({
 
   if (section.type === "foundationInteraction") {
     return <FoundationInteractionSectionView section={section} onDone={onDone} />;
+  }
+
+  if (section.type === "conceptInteraction") {
+    return <ConceptInteractionSectionView section={section} onDone={onDone} />;
   }
 
   return <TerminalStepSectionView section={section} onDone={onDone} />;
@@ -357,11 +370,11 @@ function FoundationInteractionSectionView({
   const [attempted, setAttempted] = useState(false);
   const [complete, setComplete] = useState(false);
 
-  function handleResult(ok: boolean) {
+  const handleResult = useCallback((ok: boolean) => {
     setAttempted(true);
     setComplete(ok);
     onDone(ok);
-  }
+  }, [onDone]);
 
   return (
     <>
@@ -371,6 +384,48 @@ function FoundationInteractionSectionView({
       <FoundationInteractionBody section={section} onResult={handleResult} />
       <div className="terminal-help-row">
         <button className="button button-secondary" type="button" onClick={() => setShowHint(true)}>
+          Hint
+        </button>
+        {showHint ? <p className="hint-text">{section.hint}</p> : null}
+      </div>
+      {attempted ? (
+        <p className={complete ? "feedback-success" : "feedback-error"}>
+          {complete ? section.successMessage : section.failureFeedback}
+        </p>
+      ) : null}
+    </>
+  );
+}
+
+function ConceptInteractionSectionView({
+  section,
+  onDone,
+}: {
+  section: ConceptInteractionSection;
+  onDone: (done: boolean) => void;
+}) {
+  const [showHint, setShowHint] = useState(false);
+  const [attempted, setAttempted] = useState(false);
+  const [complete, setComplete] = useState(false);
+
+  const handleResult = useCallback((ok: boolean) => {
+    setAttempted(true);
+    setComplete(ok);
+    onDone(ok);
+  }, [onDone]);
+
+  return (
+    <>
+      <h2>{section.title}</h2>
+      <p>{section.instructions}</p>
+      <p className="simulation-label">{section.simulationLabel}</p>
+      <ConceptInteraction section={section} onResult={handleResult} />
+      <div className="terminal-help-row">
+        <button
+          className="button button-secondary"
+          type="button"
+          onClick={() => setShowHint(true)}
+        >
           Hint
         </button>
         {showHint ? <p className="hint-text">{section.hint}</p> : null}

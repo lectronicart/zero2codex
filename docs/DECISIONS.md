@@ -6,6 +6,25 @@ This file records durable project decisions so future sessions can understand wh
 
 ## Decision Log
 
+### 2026-06-24: Teach Level 5 through one focused conceptual interaction union
+
+Decision: Add a `conceptInteraction` lesson section with assignment, sequence,
+request/response, JSON inspector, data-table, and system-builder variants.
+
+Why: Level 5 needs active browser-safe models for software relationships, but
+the Level 1 `foundationInteraction` is tied to files, folders, and paths. A
+small separate union keeps content data-driven without creating a generic
+visual editor or pretending to run real services.
+
+Impact:
+
+- `src/content/level5Lessons.ts` owns all 14 lessons.
+- `src/concepts/levelFiveValidation.ts` owns framework-free behavior.
+- Every Level 5 lesson includes one exact "Why this matters with Codex"
+  narrative section.
+- HTTP, APIs, JSON, SQL, databases, cloud, deployment, and DNS remain
+  conceptual browser simulations.
+
 ### 2026-06-24: Keep a visible live preview during implementation
 
 Decision: Keep the local Vite app running at `http://127.0.0.1:4187/` in a

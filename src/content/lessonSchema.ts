@@ -275,6 +275,132 @@ export const foundationInteractionSectionSchema = baseSectionSchema.extend({
   ]),
 });
 
+const conceptAssignmentSchema = z.object({
+  kind: z.literal("assignment"),
+  prompt: z.string().min(1),
+  categories: z.array(
+    z.object({
+      id: z.string().min(1),
+      label: z.string().min(1),
+      description: z.string().min(1).optional(),
+    }),
+  ).min(2),
+  items: z.array(
+    z.object({
+      id: z.string().min(1),
+      label: z.string().min(1),
+      description: z.string().min(1),
+      correctCategoryId: z.string().min(1),
+    }),
+  ).min(1),
+});
+
+const conceptSequenceSchema = z.object({
+  kind: z.literal("sequence"),
+  prompt: z.string().min(1),
+  steps: z.array(
+    z.object({
+      id: z.string().min(1),
+      label: z.string().min(1),
+      description: z.string().min(1).optional(),
+    }),
+  ).min(2),
+  correctOrder: z.array(z.string().min(1)).min(2),
+});
+
+const conceptRequestResponseSchema = z.object({
+  kind: z.literal("requestResponse"),
+  prompt: z.string().min(1),
+  request: z.object({
+    methods: z.array(z.string().min(1)).min(2),
+    paths: z.array(z.string().min(1)).min(2),
+    correctMethod: z.string().min(1),
+    correctPath: z.string().min(1),
+    headers: z.array(z.string().min(1)).optional(),
+    body: z.string().optional(),
+  }),
+  phases: z.array(
+    z.object({
+      id: z.string().min(1),
+      actor: z.string().min(1),
+      title: z.string().min(1),
+      detail: z.string().min(1),
+    }),
+  ).min(2),
+  response: z.object({
+    status: z.number().int().min(100).max(599),
+    statusText: z.string().min(1),
+    body: z.string().min(1),
+  }),
+});
+
+const conceptJsonInspectorSchema = z.object({
+  kind: z.literal("jsonInspector"),
+  prompt: z.string().min(1),
+  source: z.string().min(1),
+  questions: z.array(
+    z.object({
+      id: z.string().min(1),
+      prompt: z.string().min(1),
+      options: z.array(z.string().min(1)).min(2),
+      correctOption: z.string().min(1),
+    }),
+  ).min(1),
+});
+
+const conceptDataTableSchema = z.object({
+  kind: z.literal("dataTable"),
+  prompt: z.string().min(1),
+  columns: z.array(z.string().min(1)).min(1),
+  rows: z.array(z.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))).min(1),
+  choices: z.array(
+    z.object({
+      id: z.string().min(1),
+      label: z.string().min(1),
+      description: z.string().min(1),
+    }),
+  ).min(2),
+  correctChoiceId: z.string().min(1),
+});
+
+const conceptSystemBuilderSchema = z.object({
+  kind: z.literal("systemBuilder"),
+  prompt: z.string().min(1),
+  slots: z.array(
+    z.object({
+      id: z.string().min(1),
+      label: z.string().min(1),
+      description: z.string().min(1),
+      correctComponentId: z.string().min(1),
+    }),
+  ).min(2),
+  components: z.array(
+    z.object({
+      id: z.string().min(1),
+      label: z.string().min(1),
+      description: z.string().min(1),
+    }),
+  ).min(2),
+  summary: z.string().min(1),
+});
+
+export const conceptInteractionSectionSchema = baseSectionSchema.extend({
+  type: z.literal("conceptInteraction"),
+  instructions: z.string().min(1),
+  simulationLabel: z.string().min(1),
+  hint: z.string().min(1),
+  successMessage: z.string().min(1),
+  failureFeedback: z.string().min(1),
+  interaction: z.discriminatedUnion("kind", [
+    conceptAssignmentSchema,
+    conceptSequenceSchema,
+    conceptRequestResponseSchema,
+    conceptJsonInspectorSchema,
+    conceptDataTableSchema,
+    conceptSystemBuilderSchema,
+  ]),
+});
+
 export const terminalStepSectionSchema = baseSectionSchema.extend({
   type: z.literal("terminalStep"),
   instructions: z.string().min(1),
@@ -298,6 +424,7 @@ export const lessonSectionSchema = z.discriminatedUnion("type", [
   checklistSectionSchema,
   promptTemplateSectionSchema,
   foundationInteractionSectionSchema,
+  conceptInteractionSectionSchema,
   terminalStepSectionSchema,
 ]);
 
@@ -322,6 +449,9 @@ export type PromptTemplateSection = z.infer<typeof promptTemplateSectionSchema>;
 export type FoundationInteractionSection = z.infer<
   typeof foundationInteractionSectionSchema
 >;
+export type ConceptInteractionSection = z.infer<
+  typeof conceptInteractionSectionSchema
+>;
 export type TerminalStepSection = Omit<
   z.infer<typeof terminalStepSectionSchema>,
   "expectedCommands" | "expectedFileSystem" | "expectedGit"
@@ -338,6 +468,7 @@ export type LessonSection =
   | ChecklistSection
   | PromptTemplateSection
   | FoundationInteractionSection
+  | ConceptInteractionSection
   | TerminalStepSection;
 export type Lesson = Omit<z.infer<typeof lessonSchema>, "sections"> & {
   sections: LessonSection[];

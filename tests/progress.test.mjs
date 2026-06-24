@@ -57,6 +57,18 @@ test("Level 4 progress persists through the existing storage shape", () => {
   assert.equal(reloaded.sectionHighWaterMark["4.17"], 2);
 });
 
+test("Level 5 progress persists through the existing storage shape", () => {
+  const storage = memoryStorage();
+  let progress = updateLessonPosition(defaultProgressState, "5.14", 3);
+  progress = completeLesson(progress, "5.14", "2026-06-24T12:00:00.000Z");
+  saveProgress(progress, storage);
+
+  const reloaded = loadProgress(storage);
+  assert.ok(reloaded.completedLessons.includes("5.14"));
+  assert.equal(reloaded.currentLessonId, "5.14");
+  assert.equal(reloaded.sectionHighWaterMark["5.14"], 3);
+});
+
 test("restarting a lesson clears section resume state", () => {
   const progress = updateLessonPosition(defaultProgressState, "2.1", 2);
   const restarted = restartLesson(progress, "2.1");

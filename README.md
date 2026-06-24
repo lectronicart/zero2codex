@@ -23,6 +23,7 @@ Implemented now:
 - Playable Level 2 terminal-learning path with 13 lessons.
 - Playable Level 3 reading-and-writing-files path with 13 lessons.
 - Playable Level 4 Git-learning path with 17 lessons.
+- Playable Level 5 software-systems path with 14 lessons.
 - Reusable file, folder, path, file-type, program, and terminal concept interactions.
 - Browser-safe virtual terminal with an in-memory file system.
 - Safe simulated support for file inspection, writing, appending, search, pipes,
@@ -209,6 +210,36 @@ Key files:
 6. Include a recovery hint and beginner-safe failure feedback.
 7. Add the intended solution to lesson-flow tests and a rendered test for major
    workflows.
+
+## Level 5 Concept Architecture
+
+Level 5, "How Software Actually Works," uses one Zod-backed
+`conceptInteraction` section with six focused interaction kinds:
+
+- `assignment`: sort responsibilities or concepts into categories.
+- `sequence`: order a safe process such as deployment.
+- `requestResponse`: step through a simulated HTTP/API round trip.
+- `jsonInspector`: inspect valid JSON and identify nested value types.
+- `dataTable`: reason about records and SQL-style actions without execution.
+- `systemBuilder`: connect browser, server, API, database, hosting, and DNS.
+
+Key files:
+
+- `src/content/level5Lessons.ts`: all 14 Level 5 lessons.
+- `src/concepts/levelFiveValidation.ts`: framework-free interaction logic.
+- `src/components/ConceptInteraction.tsx`: accessible interaction rendering.
+- `tests/level-five-validation.test.mjs`: state and validation unit coverage.
+- `tests/e2e/level-five.spec.mjs`: rendered core flows and mobile coverage.
+
+### Authoring Level 5 Lessons
+
+1. Keep conceptual content in `src/content/level5Lessons.ts`.
+2. Use `conceptInteraction` for meaningful practice, not decoration.
+3. Label every model as a browser-only simulation.
+4. Include one narrative section titled exactly `Why this matters with Codex`.
+5. Keep diagrams readable as text and operable with buttons and selects.
+6. Register new lesson files in `src/content/lessons.ts`.
+7. Add pure validation tests and rendered tests for important workflows.
 
 ## MVP Direction
 

@@ -233,6 +233,32 @@ test("all 17 Level 4 lessons are playable and contain an active interaction", ()
   assert.equal(getLessonById("4.17")?.nextLessonId, "5.1");
 });
 
+test("all 14 Level 5 lessons are playable, interactive, and Codex-relevant", () => {
+  const levelLessons = playableLessons.filter((lesson) => lesson.levelId === 5);
+  assert.deepEqual(
+    levelLessons.map((lesson) => lesson.id),
+    Array.from({ length: 14 }, (_, index) => `5.${index + 1}`),
+  );
+
+  for (const lesson of levelLessons) {
+    assert.ok(
+      lesson.sections.some((section) => section.type === "conceptInteraction"),
+      `${lesson.id} needs a concept interaction`,
+    );
+    assert.equal(
+      lesson.sections.filter(
+        (section) =>
+          section.type === "narrative" &&
+          section.title === "Why this matters with Codex",
+      ).length,
+      1,
+      `${lesson.id} needs one Codex relevance section`,
+    );
+  }
+
+  assert.equal(getLessonById("5.14")?.nextLessonId, "6.1");
+});
+
 test("every Level 4 terminal exercise can be completed with intended commands", () => {
   for (const [lessonId, stepSolutions] of Object.entries(level4Solutions)) {
     const lesson = getLessonById(lessonId);
