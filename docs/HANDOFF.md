@@ -1,26 +1,32 @@
 # Handoff
 
-Last updated: 2026-06-24
+> Legacy snapshot. Use `docs/STATE.md` for the active objective, verification
+> status, blockers, and next action.
+
+Last updated: 2026-06-25
 
 ## Current State
 
-zero2codex is a Vite + React + TypeScript course app with a 17-level,
-151-lesson course map and complete playable Levels 1 through 6.
+zero2codex is currently on branch `codex/course-map-ui-refresh`. This branch is
+focused on making the course map feel much closer to the zero2claude reference
+structure while keeping zero2codex branding, copy, colors, and implementation
+original.
 
-Implemented:
+Implemented in this slice:
 
-- Level 1: six foundational lessons and Find the Project challenge.
-- Level 2: 13 terminal navigation and file-management lessons.
-- Level 3: 13 reading, writing, searching, piping, and counting lessons.
-- Level 4: 17 Git lessons and Full Git Workflow Challenge.
-- Level 5: 14 software-system lessons using the Creator Project Tracker.
-- Level 6: 12 offline HTTP/API lessons using fictional mock services.
-- Zod-backed lesson schemas, reusable lesson runner, localStorage progress,
-  browser-safe terminal/Git/HTTP simulators, and conceptual interactions.
-- Keyboard-accessible controls, text alternatives, responsive layouts, pure
-  validation tests, and Playwright integration coverage.
+- Dense single-stack course map with collapsible levels, outside level markers,
+  progress rails, a continue-learning strip, and tighter spacing.
+- Persistent `Cards` / `List` course-map switch.
+- Responsive card layout that shifts from four columns down to one column.
+- Original one-line explanations beneath all 151 lesson titles in
+  `src/content/course.ts`.
+- Shared progress, resume, and lesson-link behavior across both layouts.
+- Validation that requires a subtitle for every course-map lesson.
+- Updated course-map end-to-end coverage for stacked layout, mobile layout, and
+  layout-switch persistence.
+- Complete playable Levels 1 through 6 remain intact.
 
-Not implemented:
+Still not implemented:
 
 - Supabase, accounts, authentication, progress sync, or protected routes.
 - Real shell, GitHub, live HTTP/API, SQL, database, cloud, deployment, DNS, or
@@ -41,24 +47,28 @@ Restart if necessary:
 npm run dev -- --host 127.0.0.1 --port 4187
 ```
 
-## Current Curriculum Architecture
+Important: the current session hit an in-app browser localhost policy rejection
+while trying to capture the new card view. The preview server should remain
+running, but rendered card-view QA is not fully closed out.
 
-- `src/content/level5Lessons.ts`: all 14 lessons.
-- `src/content/lessonSchema.ts`: `conceptInteraction` discriminated union.
-- `src/components/ConceptInteraction.tsx`: reusable React interaction views.
-- `src/concepts/levelFiveValidation.ts`: pure state and validation helpers.
-- `tests/level-five-validation.test.mjs`: interaction unit coverage.
-- `tests/e2e/level-five.spec.mjs`: rendered Level 5 workflows.
-- `docs/LEVEL5_SOFTWARE_SYSTEMS_HANDOFF.md`: detailed Level 5 notes.
-- `docs/LEVEL6_HTTP_API_HANDOFF.md`: mock HTTP, curl, lessons, safety, and tests.
+## Files Changed In This Slice
 
-Interaction kinds are `assignment`, `sequence`, `requestResponse`,
-`jsonInspector`, `dataTable`, and `systemBuilder`. They are teaching models,
-not general-purpose simulators.
+Tracked modifications:
 
-The Level 6 HTTP layer lives in `src/http/`. Endpoint definitions are separate
-from curl parsing and terminal UI. Requests are routed only to lesson-enabled
-fictional `.test` hosts and stored in resettable per-lesson history.
+- `src/pages/CourseMapPage.tsx`
+- `src/components/LevelCard.tsx`
+- `src/components/AppShell.tsx`
+- `src/content/course.ts`
+- `src/styles.css`
+- `scripts/validate-content.ts`
+- `docs/HANDOFF.md`
+- `docs/DECISIONS.md`
+- `docs/NEXT_STEPS.md`
+
+Untracked additions:
+
+- `tests/e2e/course-map.spec.mjs`
+- `design-qa.md`
 
 ## Verification
 
@@ -73,28 +83,44 @@ npm run validate:content
 npm run build
 ```
 
-Latest verification:
+Latest verification in this card-view pass:
 
-- 101 unit and lesson-flow tests passed.
-- 27 Playwright integration tests passed, including all Level 6 HTTP flows.
-- Content validation found all 12 Level 6 lessons.
-- TypeScript, ESLint, and the production build passed.
-- The existing non-blocking Vite chunk-size warning remains.
-- Visible in-app-browser QA passed for POST/201 output, the complete eight-case
-  API error history, mobile overflow, accessible HTTP state, and console
-  health.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run test` passed with 101 tests.
+- `npm run validate:content` passed.
+- `npm run build` passed.
+- `node --check tests/e2e/course-map.spec.mjs` passed.
+- `git diff --check` passed.
+- The existing non-blocking Vite chunk-size warning still appears during build.
+
+Not re-run after the latest Cards/List work:
+
+- Full `npm run test:integration`.
+- In-app browser rendered QA of the new card view at desktop and mobile sizes.
+
+## Unfinished Work
+
+- Visually verify the new `Cards` layout against the supplied screenshot.
+- Tune any remaining spacing, clipping, or card-height differences after
+  rendered QA.
+- Decide whether `design-qa.md` should remain a committed project artifact.
+
+## Errors / Blockers
+
+- The in-app browser rejected `http://127.0.0.1:4187/` during card-view capture
+  with a localhost URL policy error, which blocked rendered QA for the new
+  layout.
+- Production build still reports the existing non-blocking Vite chunk-size
+  warning.
 
 ## Next Exact Action
 
-Implement Supabase email/password authentication plus anonymous-progress
-migration, followed by authenticated progress sync. Google OAuth remains
-postponed.
+Restore rendered access to `http://127.0.0.1:4187/` in the in-app browser, then
+switch the course map to `Cards`, verify desktop and mobile fidelity, and
+adjust CSS only if the rendered comparison exposes issues.
 
 ## Restart Checklist
 
-1. Read README, AGENTS, project memory, decisions, next steps, and this handoff.
-2. Read the Level 5 and Level 6 implementation handoffs before changing
-   interaction or HTTP architecture.
-3. Run `rg --files --hidden -g '!.git'` and `git status --short`.
-4. Confirm the live preview at `http://127.0.0.1:4187/`.
-5. Preserve all Level 1–6 tests and browser-safe boundaries.
+Superseded by `AGENTS.md` and `docs/STATE.md`. This checklist is retained only
+as part of the historical snapshot.

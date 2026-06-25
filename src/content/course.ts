@@ -1,3 +1,5 @@
+import { playableLessons } from "./lessons.ts";
+
 export type CourseSection = "core" | "codex" | "project" | "expert";
 
 export type LessonAvailability = "mvp-target" | "planned";
@@ -5,6 +7,7 @@ export type LessonAvailability = "mvp-target" | "planned";
 export type LessonSummary = {
   id: string;
   title: string;
+  subtitle: string;
   availability: LessonAvailability;
 };
 
@@ -99,13 +102,109 @@ const mvpLessonIds = new Set([
   "8.3",
 ]);
 
+const playableLessonSubtitles = new Map(
+  playableLessons.map((lesson) => [lesson.id, lesson.subtitle]),
+);
+
+const courseLessonSubtitleOverrides: Record<string, string> = {
+  "1.1": "Everything your computer stores lives in a file.",
+  "1.2": "Folders keep related files organized.",
+  "1.3": "A file path is the address of a file or folder.",
+  "1.4": "Filename endings hint at the kind of information inside.",
+  "1.5": "A program is a set of instructions the computer follows.",
+  "1.6": "A terminal lets you control a computer with typed commands.",
+  "7.1": "Install the runtime that powers modern JavaScript projects.",
+  "7.2": "Experiment with JavaScript one line at a time.",
+  "7.3": "Save JavaScript in a file and run it on purpose.",
+  "7.4": "Use npm to manage project tools and reusable packages.",
+  "7.5": "Create the files and settings that define a Node project.",
+  "7.6": "Add trusted packages without losing track of dependencies.",
+  "7.7": "Keep generated files and private settings out of Git.",
+  "7.8": "Start a small server that can answer a request.",
+  "7.9": "Launch a server process and know when it is ready.",
+  "7.10": "Use the private web address that points back to your computer.",
+  "7.11": "Give a server more than one path to respond to.",
+  "7.12": "Return structured data that other software can understand.",
+  "7.13": "Send a complete web page from a server route.",
+  "7.14": "Read errors, restart cleanly, and test the result again.",
+  "7.15": "Combine the level into a tiny working API.",
+  "8.1": "Meet the coding agent that can inspect, edit, test, and review.",
+  "8.2": "Choose the Codex surface that fits the work in front of you.",
+  "8.3": "Set up the Codex CLI and connect it to your account.",
+  "8.4": "Start a focused conversation about one coding task.",
+  "8.5": "Give Codex the files, goals, and constraints it needs.",
+  "8.6": "Ask Codex to explain unfamiliar code before changing it.",
+  "8.7": "Turn a clear request into a new project file.",
+  "8.8": "Make a targeted change without rewriting what already works.",
+  "8.9": "Let Codex use project commands inside explicit boundaries.",
+  "8.10": "Shape reliable requests with a goal, context, limits, and proof.",
+  "8.11": "Use a plan when the problem is fuzzy or the change is risky.",
+  "8.12": "Inspect exactly what changed before accepting the work.",
+  "8.13": "Give Codex evidence and test fixes instead of guessing.",
+  "8.14": "Pair Codex with branches, commits, and reviewable checkpoints.",
+  "8.15": "Recognize when manual work or human judgment is the better tool.",
+  "8.16": "Build and verify a small feature with a complete Codex workflow.",
+  "9.1": "Preserve the facts a future coding session should not rediscover.",
+  "9.2": "Write project instructions that Codex can find and follow.",
+  "9.3": "Understand which instructions apply when files are nested.",
+  "9.4": "Describe the observable result that proves a task is complete.",
+  "9.5": "Keep project guidance focused enough to stay useful.",
+  "10.1": "Learn how Codex connects to approved external tools.",
+  "10.2": "Configure one tool connection with a clear purpose.",
+  "10.3": "Use connected context without surrendering safety boundaries.",
+  "10.4": "Protect credentials and understand when approval is required.",
+  "10.5": "Add one useful connection to a real development workflow.",
+  "11.1": "Understand how much working information fits in one session.",
+  "11.2": "Continue, branch, and find earlier work without losing direction.",
+  "11.3": "Leave concise notes that make the next session productive.",
+  "11.4": "Keep long projects coherent when conversation history is compressed.",
+  "11.5": "Combine threads, memory, and handoffs into a durable toolkit.",
+  "12.1": "Isolate parallel changes and hand work between sessions safely.",
+  "12.2": "Inspect rendered work and verify the experience in a browser.",
+  "12.3": "Schedule repeatable checks without babysitting every run.",
+  "12.4": "Delegate narrow investigations while keeping one clear owner.",
+  "12.5": "Run repeatable Codex tasks from scripts and continuous integration.",
+  "13.1": "Orient yourself in an unfamiliar repository before editing it.",
+  "13.2": "Trace inputs, outputs, and side effects through one function.",
+  "13.3": "Turn a confusing bug into a small testable question.",
+  "13.4": "Use runtime evidence to find where behavior stops matching intent.",
+  "13.5": "Search documentation and source code before inventing an answer.",
+  "13.6": "Keep configuration flexible without exposing private credentials.",
+  "13.7": "Notice common risks before they become expensive mistakes.",
+  "13.8": "Move a tested project from your computer to a public host.",
+  "13.9": "Point a memorable domain name at the deployed application.",
+  "13.10": "Work in small branches, review changes, test, and communicate.",
+  "13.11": "Balance model strength, reasoning time, and cost for each task.",
+  "13.12": "Choose the next skill based on the work you want to create.",
+  "14.1": "Define a useful product, its smallest scope, and what success means.",
+  "14.2": "Create a clean project foundation with Codex as a collaborator.",
+  "14.3": "Build the data and server behavior behind the product.",
+  "14.4": "Turn product requirements into a usable interface.",
+  "14.5": "Connect the visible experience to real application behavior.",
+  "14.6": "Use tests and evidence to remove defects without random changes.",
+  "14.7": "Check the real interface across states, screens, and viewports.",
+  "14.8": "Publish the product and verify the live result.",
+  "14.9": "Explain how the project works and how someone should continue it.",
+  "14.10": "Ship, study what happened, and choose the next improvement.",
+  "15.1": "Coordinate focused agents while keeping decisions and context clear.",
+  "16.1": "Continue Codex work across local, cloud, and mobile-friendly surfaces.",
+  "17.1": "Match the model and workflow to the risk, complexity, and budget.",
+};
+
 function lessons(levelId: number, titles: string[]): LessonSummary[] {
   return titles.map((title, index) => {
     const id = `${levelId}.${index + 1}`;
+    const subtitle =
+      courseLessonSubtitleOverrides[id] ?? playableLessonSubtitles.get(id);
+
+    if (!subtitle) {
+      throw new Error(`Missing course-map subtitle for lesson ${id}.`);
+    }
 
     return {
       id,
       title,
+      subtitle,
       availability: mvpLessonIds.has(id) ? "mvp-target" : "planned",
     };
   });

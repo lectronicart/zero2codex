@@ -1,5 +1,8 @@
 # Project Memory
 
+> Legacy snapshot. Use `docs/STATE.md` for current operational context. This
+> file is retained for history and is not required startup reading.
+
 Last updated: 2026-06-24
 
 ## Project Snapshot
@@ -48,11 +51,11 @@ Current repo shape:
 
 ## Current Docs
 
-- `docs/HANDOFF.md`: current state and restart instructions.
-- `docs/NEXT_STEPS.md`: practical backlog.
+- `docs/STATE.md`: current operational context and next action.
 - `docs/DECISIONS.md`: durable decisions and pending choices.
-- `docs/PROJECT_MEMORY.md`: this overview.
 - `docs/ZERO2CODEX_BUILD_GUIDE.html`: primary build guide and product blueprint.
+- `docs/PROJECT_MEMORY.md`, `docs/HANDOFF.md`, and `docs/NEXT_STEPS.md`:
+  historical snapshots retained for reference.
 
 ## Current App Entry Points
 
@@ -84,14 +87,9 @@ Current repo shape:
 
 ## Guidance For Future AI Coding Sessions
 
-Start each session by reading the docs folder and inspecting the repository. Read `docs/ZERO2CODEX_BUILD_GUIDE.html` before scaffolding or changing the product direction.
-
-Use these commands for orientation:
-
-```sh
-rg --files --hidden -g '!.git'
-git status --short
-```
+This section records earlier working conventions. Current sessions should
+follow `AGENTS.md` and `docs/STATE.md`, then load other references only when
+the task requires them.
 
 When adding code:
 
@@ -131,8 +129,7 @@ npm run dev -- --host 127.0.0.1
 When changing direction:
 
 - Record durable decisions in `docs/DECISIONS.md`.
-- Refresh `docs/HANDOFF.md` with the latest state.
-- Move completed items out of `docs/NEXT_STEPS.md` or mark them done.
+- Refresh `docs/STATE.md` with the current objective and next action.
 
 ## Beginner-Friendly Principles
 

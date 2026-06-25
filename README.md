@@ -52,8 +52,8 @@ Read the full build guide before changing the product direction:
 docs/ZERO2CODEX_BUILD_GUIDE.html
 ```
 
-Also read the project memory files in `docs/` before starting a new coding
-session.
+For normal coding sessions, start with `docs/STATE.md`. The build guide and
+decision log are reference material to consult only when the task needs them.
 
 ## Setup
 

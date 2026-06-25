@@ -1,13 +1,35 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { LevelCard } from "../components/LevelCard";
-import { TerminalPreview } from "../components/TerminalPreview";
-import { courseLevels, courseStats } from "../content/course";
+import {
+  courseLevels,
+  courseStats,
+  findLessonById,
+} from "../content/course";
 import { playableLessonIds } from "../content/lessons";
+import { useProgress } from "../progress/progressStore";
 
 type MapView = "full" | "mvp";
+type MapLayout = "list" | "cards";
 
 export function CourseMapPage() {
   const [mapView, setMapView] = useState<MapView>("full");
+  const [mapLayout, setMapLayout] = useState<MapLayout>(() => {
+    if (typeof window === "undefined") {
+      return "list";
+    }
+
+    return window.localStorage.getItem("zero2codex.course-map-layout") ===
+      "cards"
+      ? "cards"
+      : "list";
+  });
+  const { progress } = useProgress();
+
+  const completedLessonIds = useMemo(
+    () => new Set(progress.completedLessons),
+    [progress.completedLessons],
+  );
 
   const visibleLevels = useMemo(() => {
     if (mapView === "full") {
@@ -19,62 +41,106 @@ export function CourseMapPage() {
     );
   }, [mapView]);
 
+  const completedCount = useMemo(
+    () =>
+      courseLevels.reduce(
+        (total, level) =>
+          total +
+          level.lessons.filter((lesson) => completedLessonIds.has(lesson.id))
+            .length,
+        0,
+      ),
+    [completedLessonIds],
+  );
+
+  const resumeLessonId = useMemo(() => {
+    if (
+      progress.currentLessonId &&
+      playableLessonIds.has(progress.currentLessonId)
+    ) {
+      return progress.currentLessonId;
+    }
+
+    return (
+      courseLevels
+        .flatMap((level) => level.lessons)
+        .find(
+          (lesson) =>
+            playableLessonIds.has(lesson.id) &&
+            !completedLessonIds.has(lesson.id),
+        )?.id ?? "1.1"
+    );
+  }, [completedLessonIds, progress.currentLessonId]);
+
+  const resumeLesson = findLessonById(resumeLessonId);
+  const overallProgress = Math.round(
+    (completedCount / courseStats.totalLessons) * 100,
+  );
+
+  const selectMapLayout = (layout: MapLayout) => {
+    setMapLayout(layout);
+    window.localStorage.setItem("zero2codex.course-map-layout", layout);
+  };
+
   return (
     <>
-      <section className="hero-layout" aria-labelledby="home-title">
-        <div className="hero-copy">
-          <h1 id="home-title">zero2codex</h1>
-          <p className="hero-lede">
-            A free, gamified beginner course for learning terminal basics,
-            coding fundamentals, and OpenAI Codex workflows.
-          </p>
-          <div className="hero-actions" aria-label="Primary actions">
-            <a className="button button-primary" href="#course-map">
-              Explore the map
-            </a>
-            <a className="button button-secondary" href="#mvp-slice">
-              Review MVP slice
-            </a>
+      <section
+        id="course-progress"
+        className="course-dashboard"
+        aria-labelledby="home-title"
+      >
+        <div className="dashboard-heading">
+          <div>
+            <span className="dashboard-eyebrow">Your learning path</span>
+            <h1 id="home-title">Your Codex learning path</h1>
+            <p>
+              Start with files and terminals. Finish with safe, reviewable
+              AI-assisted development.
+            </p>
+          </div>
+
+          <div
+            className="overall-progress"
+            aria-label={`${completedCount} of ${courseStats.totalLessons} lessons completed`}
+          >
+            <strong>
+              {completedCount}
+              <span>/{courseStats.totalLessons}</span>
+            </strong>
+            <span>lessons completed</span>
+            <div className="progress-rail" aria-hidden="true">
+              <span style={{ width: `${overallProgress}%` }} />
+            </div>
           </div>
         </div>
-        <TerminalPreview />
-      </section>
 
-      <section className="stats-grid" aria-label="Course stats">
-        <div className="stat-card">
-          <strong>{courseStats.totalLevels}</strong>
-          <span>planned levels</span>
-        </div>
-        <div className="stat-card">
-          <strong>{courseStats.totalLessons}</strong>
-          <span>planned lessons</span>
-        </div>
-        <div className="stat-card">
-          <strong>{playableLessonIds.size}</strong>
-          <span>playable lessons</span>
-        </div>
-        <div className="stat-card">
-          <strong>Email</strong>
-          <span>first auth phase</span>
-        </div>
-      </section>
+        {resumeLesson ? (
+          <div className="continue-strip">
+            <span className="continue-level">
+              Level {resumeLesson.level.id}
+            </span>
+            <span className="continue-copy">
+              <span>Continue learning</span>
+              <strong>{resumeLesson.level.title}</strong>
+              <small>{resumeLesson.lesson.title}</small>
+            </span>
+            <Link className="continue-link" to={`/lesson/${resumeLessonId}`}>
+              {completedCount > 0 ? "Resume lesson" : "Start lesson"}
+            </Link>
+          </div>
+        ) : null}
 
-      <section id="mvp-slice" className="mvp-panel" aria-labelledby="mvp-title">
-        <div>
-          <h2 id="mvp-title">First build slice</h2>
-          <p>
-            The current learning path now runs from basic computer concepts
-            through terminal work, Git, and a practical mental model of modern
-            software systems into safe, simulated HTTP and API practice.
-          </p>
+        <div className="path-stats" aria-label="Course availability">
+          <span>
+            <strong>{courseStats.totalLevels}</strong> levels
+          </span>
+          <span>
+            <strong>{playableLessonIds.size}</strong> playable now
+          </span>
+          <span>
+            <strong>Local</strong> progress saving
+          </span>
         </div>
-        <ul>
-          <li>Levels 1–4 complete: foundations, terminal, files, and Git.</li>
-          <li>Level 5 complete: browser, server, HTTP, APIs, data, and deployment.</li>
-          <li>Level 6 complete: curl, requests, responses, APIs, and secret safety.</li>
-          <li>Progress saves locally and survives refresh.</li>
-          <li>Level 8 first three lessons remain MVP targets.</li>
-        </ul>
       </section>
 
       <section
@@ -86,34 +152,64 @@ export function CourseMapPage() {
           <div>
             <h2 id="course-map-title">Course map</h2>
             <p>
-              The outline is data-driven from `src/content/course.ts`, so future
-              lesson work can attach real content without rewriting this page.
+              Open a level to see every lesson and the idea you will learn next.
             </p>
           </div>
-          <div className="segmented-control" aria-label="Course map view">
-            <button
-              type="button"
-              className={mapView === "full" ? "is-active" : ""}
-              onClick={() => setMapView("full")}
-            >
-              Full path
-            </button>
-            <button
-              type="button"
-              className={mapView === "mvp" ? "is-active" : ""}
-              onClick={() => setMapView("mvp")}
-            >
-              MVP only
-            </button>
+          <div className="course-map-controls">
+            <div className="segmented-control" aria-label="Course map scope">
+              <button
+                type="button"
+                className={mapView === "full" ? "is-active" : ""}
+                aria-pressed={mapView === "full"}
+                onClick={() => setMapView("full")}
+              >
+                All levels
+              </button>
+              <button
+                type="button"
+                className={mapView === "mvp" ? "is-active" : ""}
+                aria-pressed={mapView === "mvp"}
+                onClick={() => setMapView("mvp")}
+              >
+                Playable path
+              </button>
+            </div>
+
+            <div className="layout-control" aria-label="Course map layout">
+              <button
+                type="button"
+                className={mapLayout === "cards" ? "is-active" : ""}
+                aria-pressed={mapLayout === "cards"}
+                onClick={() => selectMapLayout("cards")}
+              >
+                Cards
+              </button>
+              <button
+                type="button"
+                className={mapLayout === "list" ? "is-active" : ""}
+                aria-pressed={mapLayout === "list"}
+                onClick={() => selectMapLayout("list")}
+              >
+                List
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="level-grid">
+        <div className="level-collection" data-layout={mapLayout}>
           {visibleLevels.map((level, index) => (
             <LevelCard
-              key={level.id}
+              key={`${mapLayout}-${level.id}`}
               level={level}
-              defaultOpen={index < 2 || level.id === 8}
+              layout={mapLayout}
+              completedLessonIds={completedLessonIds}
+              isCurrentLevel={resumeLesson?.level.id === level.id}
+              currentLessonId={resumeLessonId}
+              defaultOpen={
+                mapLayout === "cards" ||
+                resumeLesson?.level.id === level.id ||
+                (!resumeLesson && index === 0)
+              }
             />
           ))}
         </div>

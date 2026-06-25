@@ -36,6 +36,12 @@ for (const level of courseLevels) {
   if (level.lessons.length === 0) {
     errors.push(`Level ${level.id} has no lessons.`);
   }
+
+  for (const lesson of level.lessons) {
+    if (lesson.subtitle.trim().length < 12) {
+      errors.push(`${lesson.id} needs a useful course-map subtitle.`);
+    }
+  }
 }
 
 if (level2Lessons.length !== 13) {

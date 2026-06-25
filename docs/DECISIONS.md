@@ -1,10 +1,82 @@
 # Decisions
 
-Last updated: 2026-06-24
+Last updated: 2026-06-25
 
 This file records durable project decisions so future sessions can understand why the repo is shaped the way it is.
 
 ## Decision Log
+
+### 2026-06-25: Use one concise state file for session continuity
+
+Decision: Make `docs/STATE.md` the only required operational memory for a new
+coding session. Keep `AGENTS.md` focused on durable rules and use progressive
+disclosure for the README, build guide, decision log, and subsystem handoffs.
+
+Why: Requiring every session to load the full build guide and several
+overlapping memory files consumed substantial context, repeated discoverable
+facts, and allowed duplicated current-state claims to drift out of sync.
+
+Impact:
+
+- New sessions read `docs/STATE.md`, then inspect the working tree.
+- `docs/STATE.md` stays under 900 words and contains only the active objective,
+  important boundaries, verification status, blockers, and next action.
+- The build guide is read only for product, curriculum, or major architecture
+  changes.
+- `docs/DECISIONS.md` is searched by topic rather than loaded by default.
+- `docs/PROJECT_MEMORY.md`, `docs/HANDOFF.md`, and `docs/NEXT_STEPS.md` remain
+  historical snapshots and are no longer maintained as parallel current state.
+
+### 2026-06-25: Keep both stacked and card course-map layouts behind one persistent toggle
+
+Decision: Keep the dense single-stack course map as the default view, but add a
+persistent `Cards` / `List` layout toggle that stores the learner's preference
+in `localStorage`.
+
+Why: The single stack is still the clearest default for the full learning path,
+but the user also wants a compact card view that feels closer to the visual
+reference and makes level scanning faster on wide screens.
+
+Impact:
+
+- `src/pages/CourseMapPage.tsx` owns the layout mode state and persistence.
+- `src/components/LevelCard.tsx` supports both list and card presentation while
+  reusing the same progress and lesson-link data.
+- Course-map QA now needs to cover both layouts, not just the stacked view.
+
+### 2026-06-25: Require a one-line subtitle for every course-map lesson
+
+Decision: Treat the short explanation beneath each lesson title as required
+course-map content, not optional decoration.
+
+Why: The redesigned UI depends on those subtitles to make lesson names scannable
+for beginners and to better match the intended educational feel of the reference.
+
+Impact:
+
+- `src/content/course.ts` now carries an original subtitle for all 151 lessons.
+- `scripts/validate-content.ts` should fail if any lesson subtitle is missing.
+- Future lesson authoring work must include both a title and a concise beginner
+  explanation for the course-map surface.
+
+### 2026-06-24: Use a dense single-stack course map before further curriculum expansion
+
+Decision: Replace the two-column level grid and large landing-page hero with a
+compact learning dashboard plus one full-width expandable level stack.
+
+Why: The course map is the core product surface. Establishing its information
+hierarchy now prevents future levels from multiplying an early card-grid design
+that was harder to scan and less aligned with the intended terminal-course
+experience.
+
+Impact:
+
+- Level rows are compact, collapsible, and show progress at a glance.
+- Level numbers sit outside the cards to create a continuous learning path.
+- Every lesson summary includes an original one-line explanation.
+- The design uses the zero2claude screenshots only as structural and quality
+  references; zero2codex copy, colors, components, and implementation remain
+  original.
 
 ### 2026-06-24: Teach HTTP through an offline allowlisted mock universe
 

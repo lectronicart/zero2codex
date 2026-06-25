@@ -25,7 +25,7 @@ export function AppShell({ children }: AppShellProps) {
 
           <nav className="site-nav" aria-label="Primary navigation">
             <a href="/#course-map">Course map</a>
-            <a href="/#mvp-slice">MVP slice</a>
+            <a href="/#course-progress">Learning path</a>
             <NavLink to="/login">Sign in</NavLink>
             <NavLink className="nav-cta" to="/register">
               Create account
